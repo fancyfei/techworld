@@ -1,7 +1,6 @@
 # 对开发框架掌握能力要求
+> **Jpa&Mybatis框架**
 
-
-## Jpa&Mybatis框架
 *MyBatis 是支持普通 SQL查询，存储过程和高级映射的持久层框架。消除了几乎所有的JDBC代码和参数的手工设置以及结果集的检索。MyBatis 使用简单的 XML或注解用于配置和原始映射，*
 *Jpa是ORM的规范，具体的实现流行的是Hibernate。*
 
