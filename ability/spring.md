@@ -23,7 +23,8 @@
 3. 会配置数据源及连接池
 4. 了解集成其它框架Struts2或者SpringMVC。Hibernate、MyBatis、JdbcTemplate等
 5. 熟练使用SpringEL
-6. 掌握Spring事务处理，以及隔离级别及传播类型
+6. 熟悉spring的国际化
+7. 掌握Spring事务处理，以及隔离级别及传播类型
 
 > **熟练**
 
@@ -32,3 +33,9 @@
 3. 能独立配置Spring相关的组件，搭建起业务系统框架
 4. 能解决使用Spring时遇到的问题
 5. 熟悉Spring核心的代码
+
+> 补充
+>
+> Spring整合的组件常用的有remoting, JMS, JCA, JMX, email, tasks, scheduling, cache等。
+>
+> 从Spring5.0开始支持Kotlin，这个据说是下一代语言。
