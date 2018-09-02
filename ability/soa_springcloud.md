@@ -1,30 +1,35 @@
 # 对开发框架掌握能力要求
 
 ## SOA及微服务
-*SOA常用的框架是ESB或者Dubbo，Dubbo同时也可以是实现微服务的框架之一，微服务应用最广泛的还是SpringCloud技术栈。*
+- *SOA通常Rpc用WebService，框架用ESB。*
+- *SOA总线的轻量方案Nginx+hosts/dns，可配合各种RPC。*
+- *SOA最常用的框架应当还是Dubbo，Rpc用Hessian2。*
+- *Dubbo同时也可以是实现微服务的框架之一，微服务应用最广泛的还是SpringCloud那一家子。*
+- *微服务需要配置容器才能“微”，这基本上是Docker的世界了。而容器的运维被kubernetes（K8s）接管了，Swarm渐渐式微。*
+- *微服务下一代？Service Mesh（服务网格）也许来了。*
 
 > **入门**
 
 1. 了解SOA及微服务的概念
-2. 了解WebService
+2. 了解WebService，编写简单的实现
 3. 了解ESB
 4. 了解Dubbo
 5. 了解SpringCloud
-6. 了解异步模式，了解消息机制，了解部分消息中间件
+6. 了解异步模式，了解消息机制，了解缓存的使用
 
 > **掌握**
 
-1. 会使用CXF，可以调WebService接口
-2. 可以准备简单的Dubbo开发环境，能编写CRUD
-3. 可以准备简单的SpringCloud开发环境，能编写CRUD
+1. 使用Jax-WS或者CXF，编写WebService接口，实现客户端调用
+2. 准备简单的Dubbo开发环境，发布服务，调用服务
+3. 准备简单的SpringCloud开发环境，结合Eureka、ZUUL、Feign，实现多个微服务
 4. 在系统中熟练使用缓存
 5. 在系统中熟练应用消息
 6. 了解Zookeeper或Eureka等服务注册组件
-7. 了解运维脚本，可以使用常用的运维命令
+7. 了解负载均衡
 8. 了解分布式，集群
-9. 了解负载均衡
+9. 简单配置ZUUL，Nginx
 
-> **精通**
+> **熟练**
 
 1. 可以搭建一个基于Dubbo的或者SpringCloud的系统框架
 2. 熟练使用SpringCloud各个组件，掌握各组件的应用场景及原理
