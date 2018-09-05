@@ -35,10 +35,15 @@
 1. 可以搭建一个基于Dubbo的或者SpringCloud的系统框架
 2. 熟练使用SpringCloud各个组件，掌握各组件的应用场景及原理
 3. 能熟练使用Feign或RestTemplate进行RPC接口调用
-3. 系统能配合使用Zookeeper、Nginx、Consul等
-4. 可以在系统中配置Eureka、Zuul/Gateway等
-5. 可以在系统中配置Redis、RabbitMQ等
+3. Dubbo配合使用Zookeeper、Nginx、Consul等
+4. SpringCloud中配置Eureka、Zuul/Gateway等
+5. 配置Redis、RabbitMQ等
 6. 能解决分布式Session问题，分布式事务问题，RPC接口调用问题
 7. 可以集群部署，可以编写运维脚本
 8. 能使用日志和监控分析和解决遇到的问题
 
+> **注**
+
+- Dubbo有一段时间停止更新了，阿里内部也不怎么使用了。2017年后，又开始更新了。
+- Dubbo被当当网拿来支持rest后，成为DubboX，也是广泛使用的一个版本。
+- SpringCloud组件里面Netflix提供了几个重要的组件，但是更新到2.0后，逐渐的脱离Netflix。
