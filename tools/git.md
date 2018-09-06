@@ -31,7 +31,7 @@
 2. 开发分支develop
     - 一般创建来做日常开发分支，同时也是最新功能版本，到了发布阶段，就会从这个分支向master合并。
 3. 其它分支（迭代、BUG、发布）
-    - 迭代的分支sprint-*，具体迭代的分支。一般从develop分出来，合并向develop。BUG分支可以master分支，develop分支分出来都可以。发布release-*分支，可以从develop上分出来预发布。
+    - 迭代的分支sprint-*，具体迭代的分支。一般从develop分出来，合并向develop。BUG分支可以从master、develop分支分出来。发布release-*分支，可以从develop上分出来预发布。
     - 这类分支一般不固定，每个团队有不同。
 
 # git 常用的几个命令
