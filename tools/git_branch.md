@@ -27,14 +27,14 @@
 
 ![git_flow_hub](img/git_flow_hub.png)
 > Gitlab flow（主分支master作“上游”）
-1. 只存在一个主分支 master ，是其他分支的"上游"。合并后，才会到其他的分支。
+1. 只存在一个主分支 master ，是其他分支的"上游"。修改合并后，才会到其他的分支。
 2. “持续发布”的项目，在 master 分支以外，再建立不同的环境分支。开发有“开发分支”（master），生产有“生产分支”（production）。
-3. “版本发布”的项目每一个稳定版本，都要从master分支拉出一个分支，修补bug时将代码合并到这些分支。版本号需要规划。
+3. “版本发布”的项目每一个稳定版本，都要从master分支拉出一个分支，修补bug时将代码合并到这些分支。每个版本都有版本号，需要规划。
 4. 代码的变化，必须由"上游"向"下游"发展。如生产有BUG，新建BUG分支从“开发分支”出来，工作结束后，合并到“开发分支”，cherry-pick（选择合并）到“生产分支”。没有问题删除BUG分支。
 5. 紧急情况下，BUG分支可直接到“生产分支”或其他分支。再到“开发分支”。
 6. cherry-pick：选择几个提交（commit）到指定分支。
 
-注：Gitlab flow 是 Git flow 与 Github flow 的结合。最大原则叫做"上游优先"（upsteam first）。只有上游分支采纳的代码变化，才能应用到其他分支。
+注：Gitlab flow 是 Git flow 与 Github flow 的结合。对不同的项目不同管理方式。最大原则叫做"上游优先"（upsteam first）。只有上游分支采纳的代码变化，才能应用到其他分支。
 
 ![git_flow_lab](img/git_flow_lab.png)
 
