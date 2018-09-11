@@ -2,15 +2,15 @@
 
 > *分支策略*
 
-1. 常见分支：主分支 master，初始化时默认就会有master分叉。
+1. 常见分支：主分支 master，初始化时默认就会有master分支。
 2. “功能驱动式开发”：先有需求再有功能分支或者补丁分支，合并主分支后删除工作分支。
 3. 常见的策略：Git flow（master+develop），Github flow（master持续发布），Gitlab flow（主分支master作“上游”）。
 
 ![git_flow](img/git_flow.png)
 > Git flow（master+develop“版本发布”）
 
-1. 主分支：用master分支稳定的发布版本，平时不能在上面干活，并且设置保护，不可提交。
-2. 开发分支：develop，存放最新的日常开发版。不可删除。
+1. 主分支：用master分支稳定的发布版本，一般设置保护，不可提交。
+2. 开发分支：develop，存放最新的日常开发版本。不可删除。
 3. 如果要发布版本，就在Master分支上，对Develop分支进行“合并”（merge）。注：最好选择“快进式合并”。
 4. 临时分支和功能分支和预发布分支：是从Develop分支上面分出来，工作结束，合并到Develop分支并删除。
 5. 修补bug分支：从Master分支上面分出来，工作结束，合并到Master分支和Develop分支并删除。
