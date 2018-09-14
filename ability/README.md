@@ -14,6 +14,11 @@
 
 ## [Soa及微服务SpringCloud](soa_springcloud.md)
 
+## [sql能力](sql.md)
+
+## [javascript能力](javascript.md)
+
 ## [开发运维](dev_ops.md)
 
 ## [常用中间件](middleware.md)
+
