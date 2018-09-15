@@ -14,7 +14,7 @@
 
 ## [Soa及微服务SpringCloud](soa_springcloud.md)
 
-## [sql能力](sql.md)
+## [数据库](database.md)
 
 ## [javascript能力](javascript.md)
 
