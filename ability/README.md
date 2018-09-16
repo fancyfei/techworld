@@ -2,8 +2,6 @@
 
 ## [java基本知识](java.md)
 
-## [框架概要](framework.md)
-
 ## [spring](spring.md)
 
 ## [springmvc](springmvc.md)
@@ -14,7 +12,7 @@
 
 ## [Soa及微服务SpringCloud](soa_springcloud.md)
 
-## [数据库](database.md)
+## [数据库](sql.md)
 
 ## [javascript能力](javascript.md)
 
