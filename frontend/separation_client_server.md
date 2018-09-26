@@ -20,10 +20,22 @@
 - 初次加载耗时增加。
 - 对开发者要求比较高，需要了解一整套技术栈。
 - 如果前后端同一人来做，复杂度就增加了。
+- 前端技术更新太快，带来比较大的学习成本。
 
-# 主要技术
+# 主要前端框架
 1. Angular
 2. React
 3. Vue
 
+# 前端涉及的技术
+1. ES5 & ES6 & ES7
+2. HTML5 API & CSS3
+3. Less & Sass
+4. CMD & AMD & CommonJS
+5. WebSocket
+
+# 主要后端技术
+1. Java、.net等不限。
+2. Nodejs，它也在前端的工具中有广泛的应用。
+3. 或者Nginx，也可和Nodejs配合。
 
