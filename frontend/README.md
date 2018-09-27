@@ -4,5 +4,7 @@
 
 ## [前端的几个知识点](front_dd.md)
 
-## [VUE框架](vue.md)
+## [VUE框架介绍](vue.md)
+
+## [VUE框架详细功能及特性](vue_detail.md)
 
