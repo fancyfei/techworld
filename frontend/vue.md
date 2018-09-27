@@ -57,4 +57,4 @@
 - mixins：混入，定义了一部分可复用的方法或者计算属性。1. 钩子函数，那将会进行合并，都执行。2. methods等方法，被组件中会覆盖。
 
 
-![vue_lifecycle](../tools/img/vue_lifecycle.png)
+![vue_lifecycle](./img/vue_lifecycle.jpg)
