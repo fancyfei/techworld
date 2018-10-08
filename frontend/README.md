@@ -6,5 +6,5 @@
 
 ## [VUE框架介绍](vue.md)
 
-## [VUE框架详细功能及特性](vue_detail.md)
+## [VUE框架详细功能及特性](vue_module.md)
 
