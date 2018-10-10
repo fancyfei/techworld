@@ -10,3 +10,5 @@
 [工具的使用](tools/README.md)
 
 [团队提升](manage/README.md)
+
+[读书](read/README.md)
