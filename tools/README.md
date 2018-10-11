@@ -9,3 +9,6 @@
 
 ## [sonar](sonar.md)
 ## [sonar安装及配置](sonar_install.md)
+
+## [jenkins了解](jenkins.md)
+## [jenkins安装配置](jenkins_install.md)
