@@ -20,3 +20,6 @@
 
 ## [常用中间件](middleware.md)
 
+## 产品经理
+
+### [转载自阿里的产品经理能力模型](product_manager_alibaba.md)
