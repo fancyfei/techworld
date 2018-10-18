@@ -22,4 +22,6 @@
 
 ## 产品经理
 
+
+### [产品经理能力](product_manager.md)
 ### [转载自阿里的产品经理能力模型](product_manager_alibaba.md)
