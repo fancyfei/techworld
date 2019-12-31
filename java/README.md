@@ -6,4 +6,5 @@
 # 面向对象
 [面向对象OO](oo.md)，面向对象的整理
 [面向对象之封装](oo_encapsulation.md)，面向对象的封装
+[面向对象之继承](oo_inheritance.md)，面向对象的继承
 [类的详解](oo_class.md)，Java的类相关知识整理
