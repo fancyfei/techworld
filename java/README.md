@@ -3,8 +3,10 @@
 [Java语法梳理](java_syntax.md)，Java的基础语法梳理
 [方法的相关知识](function.md)，方法的相关基础知识
 [方法的原理](function_theory.md)，方法调用过程及原理
+[Java各种类的详解](java_class.md)，Java的类相关知识整理
 # 面向对象
 [面向对象OO](oo.md)，面向对象的整理
 [面向对象之封装](oo_encapsulation.md)，面向对象的封装
 [面向对象之继承](oo_inheritance.md)，面向对象的继承
-[类的详解](oo_class.md)，Java的类相关知识整理
+[面向对象之多态](oo_polymorphism.md)，面向对象的多态
+[面向对象之类的详解](oo_class.md)，面向对象的类相关知识整理
