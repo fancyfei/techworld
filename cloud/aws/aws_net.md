@@ -13,7 +13,7 @@ AWS所抽象过的网络组件，隐藏了很多现实中网络的细节。
 - 不同REGION的VPC之间，则需要公网的VPN来实现IPSec（安全协议）连接，需要网段不重。
 - VPC和客户内网之间，同样要公网的VPN，另外为保证质量可用AWS的VPN，如需要无障碍打通需要专线。
 
-## AWS提供的网络组件
+## VPC提供的网络组件
 - VPC
 
   VPC （Virtual Private Cloud ），虚拟私有云，是基础设施所运行在的一个私有网络空间。VPC有一段自已的地址空间（CIDR 范围），例如 10.0.0.0/16 。这将决定 VPC 内有多少可分配 IP 。相互之间是隔离的网络环境。
@@ -30,27 +30,17 @@ AWS所抽象过的网络组件，隐藏了很多现实中网络的细节。
 
 - Internet Gateway（互联网关）
 
-  互联网关是VPC 中的实例访问Internet的必经之地。在 VPC 路由表中路由目标设定为互联网关则可访问外网；通过路由到有公有 IP 地址的NAT，再路由到互联网关可访问外网。
+  互联网关是VPC 中的实例访问Internet的必经之地。在 VPC 路由表中路由目标设定为互联网关则可访问外网；互联网关将Internet流量进行NAT到有公有 IP 地址的实例。
 
-  子网与公网的路由表（包含指向 Internet 网关的路由）相关联，该子网就是所谓的公有子网。
+  将 Internet 网关附加到 VPC，子网与公网的路由表（包含指向 Internet 网关的路由）相关联，该子网就是所谓的公有子网，配置安全组与访问控制允许流入和流出，则子网中的实例（有全局唯一 IP 地址）就可以被Internet 访问到了。
+
+- NAT (网络地址转换) 
+
+  使用 NAT 设备允许私有子网中的实例连接到 Internet 或其他 AWS 服务，但阻止 Internet 发起与实例的连接。
 
 - SG & Network ACL
 
-
-
-- Avaibility Zone
-
-
-
-- VPN/Direct connect
-
-
-
-- Endpoint
-
-
-
-- 3rd Party Device (Virtual)
+  
 
 
 
