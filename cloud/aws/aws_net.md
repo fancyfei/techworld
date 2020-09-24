@@ -60,5 +60,16 @@ AWS所抽象过的网络组件，隐藏了很多现实中网络的细节。
 
   它将名称解析到各自相应的 IP 地址，AWS提供对应实例的公有和私有 DNS 主机名。“.internal”是私有域名，“.amazonaws.com”是公有域名。如果是自定义域名，可以使用Route 53来管理。
 
+## 网络打通
 
+- vpn
 
+  AWS中国还没有AWS Site-to-Site VPN 服务，但是已经可以支持AWS Direct Connect（类似专线）。所以与客户办公网络打通，一般只能选择如StrongSwan等工具，建立site-to-site模式的IPsec VPN（安全的隧道）。
+
+- AWS Direct Connect
+
+  类似专线连接，一端接到您的路由器，另一端接到 AWS Direct Connect 路由器，两端可以直接创建网络连接。
+
+完整的拓扑如下：
+
+![AWS的网络打通](img/aws-site-to-site-vpn.png)
