@@ -16,9 +16,7 @@
 
 ## [javascript能力](javascript.md)
 
-## [开发运维](dev_ops.md)
 
-## [常用中间件](middleware.md)
 
 ## 产品经理
 
