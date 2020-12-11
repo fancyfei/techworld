@@ -9,7 +9,7 @@ Hadoop的核心组件是HDFS、MapReduce、Yarn。HDFS集群和YARN集群，两�
 ![hadoop_system](hadoop_system.png)
 
 - HDFS: Hadoop Distributed File System 分布式文件系统，负责海量数据的存储，集群中的角色主要有 NameNode / DataNode/SecondaryNameNode。
-- YARN: Yet Another Resource Negotiator  资源管理调度系统，负责海量数据运算时的资源调度，集群中的角色主要有 ResourceManager /NodeManager。
+- YARN: Yet Another Resource Negotiator  资源管理调度系统，负责海量数据运算时的资源调度，集群中的角色主要有 ResourceManager /NodeManager。就是图中的jobtracker和tasktracker的替代（暂时没找到新版的图片，hadoop2中就使用yarn重构了调度过程）。
 - MapReduce：分布式运算框架，它其实是一个应用程序开发包。
 
 ## 生态圈
