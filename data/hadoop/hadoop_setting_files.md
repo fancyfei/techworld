@@ -4,7 +4,7 @@
 
 ## 安装目录
 
-![tree](hadoop_folder.png)
+![tree](img/hadoop_folder.png)
 
 - **bin**：放着Hadoop最基本的管理脚本和使用脚本，sbin目录下管理脚本就是依赖这儿的脚本来实现的，用户也可以直接使用这些脚本管理和使用Hadoop。
 - **etc**：配置文件所在的目录，包括：core-site.xml、hdfs-site.xml、mapred-site.xml和yarn-site.xml等配置文件。

@@ -2,7 +2,7 @@
 
 MapReduce系统是一个分布式计算框架,可以理解为是一个jar包或一个程序，这个程序要运行在Yarn上面。主要任务就是利用廉价的计算机对海量的数据进行分解处理。它的计算方式是指定一个Map函数把一组键值对映射成一组新的键值对，再用Reduce函数并发的进行归集。详细的过程是先读取文件数据，然后进行Map处理，接着Reduce处理，最后把处理结果写到文件中。
 
-![mapreduce_process](hadoop_mapreduce_process.png)
+![mapreduce_process](img/hadoop_mapreduce_process.png)
 
 ## 框架特点
 

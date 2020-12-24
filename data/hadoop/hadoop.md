@@ -6,7 +6,7 @@ Apache基金会的Hadoop根据Google的论文实现MapReduce开源计算框架�
 
 Hadoop的核心组件是HDFS、MapReduce、Yarn。HDFS集群和YARN集群，两者逻辑上分离，但物理上常在一起。
 
-![hadoop_system](hadoop_system.png)
+![hadoop_system](img/hadoop_system.png)
 
 - HDFS: Hadoop Distributed File System 分布式文件系统，负责海量数据的存储，集群中的角色主要有 NameNode / DataNode/SecondaryNameNode。
 - YARN: Yet Another Resource Negotiator  资源管理调度系统，负责海量数据运算时的资源调度，集群中的角色主要有 ResourceManager /NodeManager。就是图中的jobtracker和tasktracker的替代（暂时没找到新版的图片，hadoop2中就使用yarn重构了调度过程）。
@@ -16,7 +16,7 @@ Hadoop的核心组件是HDFS、MapReduce、Yarn。HDFS集群和YARN集群，两�
 
 随着处理任务不同，各种组件相继出现，丰富Hadoop生态圈，目前生态圈结构大致如图所示：
 
-![hadoop_ecology](hadoop_ecology.png)
+![hadoop_ecology](img/hadoop_ecology.png)
 
 - Spark（分布式计算框架），一种基于内存的分布式并行计算框架，主要批量处理海量数据。
 - Flink（分布式计算框架），一个基于内存的分布式并行处理框架，主要处理流数据，类似Spark。

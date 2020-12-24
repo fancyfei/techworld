@@ -2,7 +2,7 @@
 
 YARN（Yet Another Resource Negotiator），Hadoop独立出来的资源管理框架，代替JobTracker来负责资源管理和调度的。YARN是一个分布式资源管理系统，用于提高分布式的集群环境下资源的利用率，这些资源包括内存，I/O，网络，磁盘等。其产生的原因是为了解决MapReduce框架的不足。
 
-![hadoop_yarn](hadoop_yarn.png)
+![hadoop_yarn](img/hadoop_yarn.png)
 
 ## 组件
 

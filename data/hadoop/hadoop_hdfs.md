@@ -2,7 +2,7 @@
 
 HDFS（Hadoop Distributed File System）分布式文件系统，是Hadoop的储存系统，能够实现创建文件、删除文件、移动文件等功能，文件被平均分块通过网络在多台主机上存储，就可以并行从多机器上读取。HDFS高吞吐量的数据读写的特性，能够面向大规模数据使用，可进行扩展的文件存储与传递。
 
-![hadoop_hdfs](hadoop_hdfs.png)
+![hadoop_hdfs](img/hadoop_hdfs.png)
 
 ## 主要面向的问题域
 
@@ -16,10 +16,11 @@ HDFS（Hadoop Distributed File System）分布式文件系统，是Hadoop的储�
 - **Block（块）**，将一个文件进行分块存储在多个DataNode上，每个块都有副本。
 - **NameNode（名称节点）**，保存整个文件系统的元数据：目录信息、文件信息及分块信息，运行时所有数据都保存到内存，此节点支持动态备份。也会定时将数据保存到硬盘。备份的名称节点会定时与主节点同步数据。
 - **DataNode（数据节点）**，分布在集群的计算机上，用于存储Block 块文件。数据节点之间会同步副本。
+- **Secondary NameNode（助手节点）**，NameNode的一个助手节点，为HDFS中提供一个检查点，定期合并数据文件。
 
 ## 写过程
 
-![hadoop_hdfs_write](hadoop_hdfs_write.png)
+![hadoop_hdfs_write](img/hadoop_hdfs_write.png)
 
 - HDFSClient 向NameNode 发起文件写入的请求。
 - NameNode 根据文件大小和文件块配置情况，返回给HDFSClient 它所管理部分DataNode 的信息（block id 和要写入的 DataNode 的列表）。
@@ -32,7 +33,7 @@ Hadoop有机架感知功能，默认不开启且不是自适应，需要告诉 H
 
 ## 读过程
 
-![hadoop_hdfs_write](hadoop_hdfs_read.png)
+![hadoop_hdfs_write](img/hadoop_hdfs_read.png)
 
 - HDFSClient 向NameNode 发起文件读取的请求。
 - NameNode 返回文件存储的DataNode 的信息：文件的所有block和这些block所在的DataNodes（包括复制节点）。
@@ -43,3 +44,7 @@ Hadoop有机架感知功能，默认不开启且不是自适应，需要告诉 H
 - 写故障， 如果DataNode在数据写入的时候发生故障，HDFSClient直接跳过此节点写其他节点，并通知NameNode，NameNode等故障DataNode恢复时删除写入没有完成的块。
 - 读故障，就会试图从这个块的另外一个最邻近DataNode读取数据。并标记故障节点。
 - DataNode故障导致副本不足的块可以手动修复或配置自动修复，复制一个数据块到新的DataNode。
+
+## Secondary NameNode
+
+Secondary NameNode的整个目的是在HDFS中提供一个检查点，它只是NameNode的一个助手节点，定期唤醒，进行fsimage和edits的合并，防止文件过大。首先将NameNode的fsimage和edits下载到SecondryNameNode 所在的节点的数据目录，然后合并到fsimage文件，最后上传到NameNode节点。合并的过程中不影响NameNode节点的操作。

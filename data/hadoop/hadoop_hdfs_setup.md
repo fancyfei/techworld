@@ -56,7 +56,7 @@ Hadoop解压并配置好环境之后，修改各配置文件。配置文件都�
 
 ## 启动及异常处理
 
-HDFS启动会独立NameNode、Sercondary NameNodes 和 DataNode 这三个进程。
+HDFS启动会独立NameNode、Sercondary NameNodes 和 DataNode 这三个进程。Secondary NameNode的整个目的是在HDFS中提供一个检查点，它只是NameNode的一个助手节点，定期唤醒，进行fsimage和edits的合并，防止文件过大。
 
 - 生效环境配置变量：etc/hadoop/hadoop-env.sh
 - 启动，sbin/start-dfs.sh
@@ -86,6 +86,8 @@ HDFS启动会独立NameNode、Sercondary NameNodes 和 DataNode 这三个进程�
 - localhost:9870/访问失败，关闭防火墙或配置hdfs-site.xml中的dfs.http.address为0.0.0.0:9870 。如有服务端口访问不到的，都可以检查一下IP是否是0.0.0.0，多网卡才会有的问题。
 
 - 读写文件时遇到DataNode节点总是使用内网IP或localhost，解决办法有，一是使用域名，客户端指定属性"dfs.client.use.datanode.hostname", "true"，另外就是指定外网可访问IP启动节点服务。
+
+- 调整参数后，DataNode启动不了，报clusterID不一致的错，把dfs/name/current/VERSION的clusterID复制到/dfs/data/current/VERSION中。
 
 ## 文件系统的使用
 
