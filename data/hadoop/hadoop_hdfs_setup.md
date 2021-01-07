@@ -46,11 +46,11 @@ Hadoop解压并配置好环境之后，修改各配置文件。配置文件都�
 
 **hdfs-site.xml** HDFS的核心配置文件，副本数，数据存储目录等。
 
-- dfs.name.dir，NameNode 元数据存放位置， 默认值：${hadoop.tmp.dir}/dfs/name。
-- dfs.data.dir，DataNode 在本地磁盘存放block的位置，可多个，默认值：${hadoop.tmp.dir}/dfs/data。
+- dfs.namenode.name.dir，NameNode 元数据存放位置， 默认值：${hadoop.tmp.dir}/dfs/name。
+- dfs.datanode.data.dir，DataNode 在本地磁盘存放block的位置，可多个，默认值：${hadoop.tmp.dir}/dfs/data。
 - dfs.replication，DataNode上设置的副本份数，默认是3份，客户端也可以指定。
 - dfs.blocksize，数据块大小，单位byte。默认是134217728（128M）。
-- dfs.http.address，NameNode web管理地址与端口，默认9870。
+- dfs.namenode.http-address，NameNode web管理地址与端口，默认9870。
 
 **etc/hadoop/slaves** DataNode上读取的所有的slave的名称或IP，每行存放一个。
 

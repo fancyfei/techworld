@@ -6,6 +6,7 @@
 -  [Yarn架构](hadoop_yarn.md) ，Yarn的架构，独立的资源调度 
 -  [hadoop目录](hadoop_setting_files.md) ，Hadoop的目录结构
 -  [hadoop配置文件](hadoop_shell_files.md) ，Hadoop的配置与启动文件
+-   [hadoop集群安装](hadoop_cluster_setup.md) Hadoop集群安装配置
 
 ## HDFS
 
