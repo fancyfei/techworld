@@ -9,8 +9,8 @@ HBase支持Hadoop map-reduce程序设计模型。HBase有两种访问方式：�
 HBase 的数据模型的核心是表，包含着行、键列族和列。get与scan都以行键rowkey 为参数查找数据位置并读取。为了减少读取的IO次数，加了多层缓存，首先表的元数据将缓存在客户端，HRegion上也先访问内存中的memstore以及blockcache。另外Hfile为行键设置了多种索引。
 
 - Hbase Table数据结构组成：Table = rowkey + family + column + timestamp + value。
-
 - Hbase的结构元素组成：ZooKeeper，HMaster，HRegionSever，HRegion，HStore，MemStore与StoreFile，HFile。
+- HBase存储的设计：LSM树（Log-Structured Merge Tree）存储引擎。它首先在内存中构建一颗有序的小树，随着小树的逐渐增大，达到一定阈值时会flush到磁盘，磁盘中的树定期可以做merge操作，合并成一棵大树，以优化读性能。
 
 ## 读数据过程
 
@@ -33,22 +33,17 @@ HBase一次范围查询可能会涉及多个Region、多块缓存甚至多个Hfi
 1. HRegionServer构建RegionScanner，用于对该Region的数据检索。
 2. 一个RegionScanner管理一堆ColumnFamily，构造StoreScanner，用于对该列族的数据检索。多个StoreScanner合并构建最小堆（已排序的完全二叉树）StoreHeap:PriorityQueue<StoreScanner>。
 3. StoreScanner管理一堆HFile，构造一个MemStoreScanner和一个或多个StoreFileScanner（数量取决于StoreFile数量），这个是实际读取数据的地方（除了compaction状态的HFile）。需要过滤掉RowKey一定不在StoreFile内的对应的Scanner，主要过滤策略有：Time Range过滤、Rowkey Range过滤以及布隆过滤器。
-4. 每个Scanner seek到startKey，这个步骤就是在每个StoreFile或MemStore中seek扫描起始点startKey。
-5. 将所有的StoreFileScanner和MemStoreScanner合并并由小到大排序，构建最小堆KeyValueHeap:PriorityQueue<KeyValueScanner>。
-6. 通过触发Scanner的next() 调用，来遍历所有 Scanner 中的数据，将结果返回。
-
-scanner.next的步骤分解如下：
-
-1. Scan是一行一行获取的，获取完一行之后再获取下一行。
-2. 一般查找的顺序是先memstore，然后blockcache，最后到HFile。
-3. 每次拿一次数据都要判断下是否有stopRow，如果有可以停在搜索返回。
-4. 最终返回的List<Cell>results要封装成Result[]格式返回。
+4. 每个Scanner seek到startKey，这个步骤就是在Blockcache中读取该HFile的索引树结构，seek扫描起始点startKey，然后Load Block（先BlockCache再HFile），最后在Data Block内部通过二分查找的方式定位具体的RowKey。
+5. 将所有的StoreFileScanner和MemStoreScanner合并，并按keyvalue由小到大排序，构建最小堆KeyValueHeap:PriorityQueue<KeyValueScanner>。
+6. 通过触发KeyValueHeap的peek()和next() 调用，来遍历与过滤所有 Scanner 中的数据，最终返回的List<Cell>results要封装成Result[]格式返回。这步的过滤分两方面，一方面是过期、删除、版本等，另一方面是用户的过滤条件。
 
 
 
 ## 附：数据部分的KeyValue数据结构
 
-KeyValue由Key length、value length、key、value组成。其中key又由RowKey length、RowKey、ColumnFamily length、ColumnFamily、ColumnQualifier、TimeStamp、KeyType组成。
+KeyValue由Key length、value length、key、value组成。
+
+其中key又由RowKey length、RowKey、ColumnFamily length、ColumnFamily、ColumnQualifier、TimeStamp、KeyType组成。
 
 - RowKey length：RowKey长度
 - RowKey：RowKey内容
@@ -62,11 +57,15 @@ KeyValue由Key length、value length、key、value组成。其中key又由RowKey
 
 ## 附：rowkey设计
 
-rowkey的设计上需要满足长度原则、散列原则、唯一原则。
+HBase查询只能通过其Rowkey来查询，Rowkey设计的优劣直接影响读写性能。HBase中的数据是按照Rowkey的ASCII字典顺序进行全局排序。
 
-长度原则：建议是越短越好，不要超过16个字节。
+Rowkey设计应遵循以下原则：
 
-散列原则：建议将Rowkey的高位作为散列字段，减少RegionServer上堆积的热点现象。
+长度原则：建议是越短越好，不要超过16个字节。而且列族名、列名等也尽量使用短名字。
 
-唯一原则：必须在设计上保证其唯一性，因为rowkey是按照字典顺序排序存储的。
+散列原则：我们设计的Rowkey应均匀的分布在各个HBase节点上。建议将Rowkey的高位作为散列字段，减少RegionServer上堆积的热点现象。
+
+唯一原则：必须在设计上保证其唯一性，相同Rowkey数据会被覆盖。
+
+排序原则：Rowkey是按照ASCII有序设计的，业务上可以利用这一点减少性能的消耗。
 

@@ -80,6 +80,14 @@ HFile经历了三个版本，其中V2在0.92引入，V3在0.98引入。V1占用�
 
 HLog File:(Write Ahead Log) 预写日志(HLog)文件，HBase中系统故障恢复以及主从复制都基于HLog实现。一个RegionServer有一个HLog（默认一个可指定多个），存放在HDFS上，是一种定制化格式的数据存储文件。
 
+WAL的持久化等级有：
+
+- SKIP_WAL：只写缓存，不写HLog日志，性能最好。
+- ASYNC_WAL：异步将数据写入HLog日志中。
+- SYNC_WAL：同步将数据写入日志文件中。
+- FSYNC_WAL：同步将数据写入日志文件并强制落盘，最严格。
+- USER_DEFAULT：默认如果用户没有指定，使用SYNC_WAL。
+
 预写日志文件在hdfs中存储目录：
 
 ```shell
@@ -95,12 +103,18 @@ Hlog文件的基本结构如下：
 
 HLog中，日志单元WALEntry（图中小方框）表示一次行级更新的最小追加单元，它由HLogKey和WALEdit两部分组成，其中HLogKey由table name、region name以及sequenceid等字段构成。WALEdit用来表示一个事务中的更新集合。
 
-HLog文件生成之后并不会永久存储在系统中，它的使命完成后，文件就会失效最终被删除。HLog生命周期包含4个阶段：
+HLog文件生成之后并不会永久存储在系统中，它的使命完成后，文件就会失效最终被删除。
+
+HLog生命周期包含4个阶段：
 
 - 构建，HBase的任何写入（更新、删除）操作都会先将记录追加写入到HLog文件中。
 - 滚动，HBase后台启动一个线程，每隔一段时间日志滚动会新建一个新的日志文件，接收新的日志数据。
 - 失效，写入数据一旦从MemStore中落盘，对应的日志数据就会失效。先从WALs文件夹移动到oldWALs文件夹。失效是以文件为单位。
 - 删除，Master后台会启动一个线程，每隔一段时间检查一次文件夹oldWALs下的所有失效日志文件，不参与主从复制并超10分钟则删除。
+
+HLog的故障恢复：
+
+如果RegionServer宕机，zookeeper根据心跳会立刻感知到。HMaster会将宕机RegionServer上的所有Region重新分配到集群中其他正常RegionServer上去，再根据HLog进行丢失数据恢复，恢复完成之后就可以对外提供服务。
 
 
 
