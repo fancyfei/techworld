@@ -11,3 +11,6 @@
 - [Hbase的写流程](hbase_data_write.md) Hbase的写流程。
 
 ## 运维
+
+- [Hbase安装](hbase_setup.md) Hbase安装配置。
+
