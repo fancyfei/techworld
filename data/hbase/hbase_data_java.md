@@ -2,6 +2,8 @@
 
 Hbase采用Java实现，其中 Java API 是原生支持的，其它编程语言接口需要通过 Thrift 协议支持。在HBase 官方代码包里含有Java实现的原生访问客户端，相关的类在 org.apache.hadoop.hbase.client 包中，都是与 Hbase 数据存储管理相关的 API。
 
+基本操作有：HBase 的配置、HBase 表的管理、列族的管理、列的管理、数据操作等。
+
 ## 相关依赖
 
 官方的Jar包在HBase 安装目录下的 lib 子目录。但是一般还是使用Maven管理Jar依赖。主要用到hbase-client-x.x.x.jar和hbase-common-x.x.x.jar。

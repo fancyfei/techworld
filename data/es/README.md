@@ -5,3 +5,4 @@
 - [索引数据类型](elasticsearch_index_type.md) ，复用通用设置。
 - [索引模板](elasticsearch_template.md) ，复用通用设置。
 
+- [Elasticsearch安装](elasticsearch_setup.md) ，运维：安装，配置等

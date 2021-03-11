@@ -14,3 +14,4 @@
 
 - [Hbase安装](hbase_setup.md) Hbase安装配置。
 
+- [Hbase与Java](hbase_data_java.md) Java连接到Hbase进行操作。
