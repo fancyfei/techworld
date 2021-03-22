@@ -1,6 +1,8 @@
 # Elasticsearch 重要的几个概念与功能
 
-Elasticsearch（ES） 是一个分布式、可扩展、实时的搜索与数据分析引擎。它基于Lucene并用Java实现的开源软件，并提供了基于RESTful web接口。Lucene 是当下最先进、高性能、全功能的搜索引擎库，但是比较复杂，ES对Lucene 做了一层封装，它提供了一套简单一致的 RESTful API 来帮助我们实现存储和检索，存储与接口都以Json格式序列化进行。
+Elasticsearch（ES） 是一个分布式、可扩展、实时的搜索与数据分析引擎。Elasticsearch由公司Elastic开源，并主要运营着Elasticsearch、Kibana、Beats 和 Logstash，以及云服务。Shay Banon在2010年创建了第一个版本，在2012年成立了这家公司。从2014年发布1.0版本开始，基本上保持每年一个大版本发布。
+
+Elasticsearch基于Lucene并用Java实现的开源软件，并提供了基于RESTful web接口。Lucene 是当下最先进、高性能、全功能的搜索引擎库，但是比较复杂，ES对Lucene 做了一层封装，它提供了一套简单一致的 RESTful API 来帮助我们实现存储和检索，存储与接口都以Json格式序列化进行。
 
 最重要的功能包括：
 

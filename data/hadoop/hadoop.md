@@ -1,6 +1,8 @@
 # Hadoop：事实上的大数据标准
 
-Apache基金会的Hadoop根据Google的论文实现MapReduce开源计算框架，结合分布式文件系统HDFS（Hadoop Distributed File System），  Hadoop是目前应用最为广泛的分布式大数据处理框架，其具备可靠、高效、可伸缩等特点。在分布式环境下提供了海量数据的处理能力，可以让用户在不了解分布式底层细节的情况下，开发分布式程序，充分利用低成本机器集群进行高速运算和存储。
+Apache基金会的Hadoop根据Google的论文实现MapReduce开源计算框架，结合分布式文件系统HDFS（Hadoop Distributed File System），Hadoop是目前应用最为广泛的分布式大数据处理框架，其具备可靠、高效、可伸缩等特点。在分布式环境下提供了海量数据的处理能力，可以让用户在不了解分布式底层细节的情况下，开发分布式程序，充分利用低成本机器集群进行高速运算和存储。
+
+Hadoop起源于Google在2003年后公布的三大论文，GFS、MapReduce、BigTable，也对应了HDFS、Hadoop MapReduce、HBase。Apache在2006年将Hadoop从Lucene的子项目Nutch中分离出来，正式成为顶级项目发展。他的子项目HBase、Hive、Pig、ZooKeeper 等在2010分别独立为顶级项目。随后快速发展，1.0版本2012年发布，2.0版本2013年发布，但3.0的稳定版本在2018年前后才发布，目前使用比较广泛的是2.0版本。
 
 ## 核心组件
 
