@@ -14,6 +14,10 @@
 
  [ddd](domain/ddd.md) ，DDD建模。
 
+ [战略建模](domain\ddd_context_domain.md) ，DDD的战略建模，领域及限界上下文。
+
+ [战术建模](domain\ddd_domain_model.md) ，DDD的战术建模，领域模型。
+
 ## 设计
 
 
