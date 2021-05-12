@@ -5,11 +5,12 @@
 - 现代的收集器基本都采用分代收集算法。
 - 新生代内存不足时，或者要分配超大对象时，都会启动“分配担保”，直接将内存分配在老年代。
 
-# JVM的垃圾收集器
+## JVM的垃圾收集器
 不同的JVM所提供的垃圾收集器可能会有很在差别，到现在应用最广泛的JDK7/8后，HotSpot虚拟机所有收集器及组合（连线）如下：
-![7种垃圾收集器](./img/jvm-gc.png)
+![7种垃圾收集器](jvm-gc.png)
 
-## Serial
+- **Serial**
+
 新生代串行收集器，JDK1.3前唯一选项。针对新生代的采用复制算法单线程收集器，
 一旦启动，其他线程就全部进入暂停“Stop-the-world”状态。
 它的优势在简单而高效，在内存较小的情况没有线程切换可以有最高的收集效率。
@@ -17,13 +18,15 @@
 
 可由"-XX:+UseSerialGC"指定。
 
-## ParNew
+- **ParNew**
+
 新生代多线程并行收集器，是Serial的多线程版本，一样使用了复制算法，关注缩短垃圾收集时间。
 在单CPU情况下，效果不好。
 
 可由"-XX:+UseParNewGC"指定。
 
-## Parallel Scavenge
+- **Parallel Scavenge**
+
 新生代多线程并行收集器，与ParNew相似使用了复制算法。
 关注吞吐量，也称为吞吐量收集器（Throughput Collector），即减少垃圾收集时间。
 
@@ -33,20 +36,23 @@
 
 可由"-XX:+UseParallelGC"指定。
 
-## Serial Old
+- **Serial Old**
+
 老年代单线程串行收集器，使用标记整理算法，关注单次垃圾收集效率。
 标记整理是标记清除的改进，在标记阶段是相同的操作，
-在整理阶段的方法是Sweep（清理，将废弃的对象清理）和Compact（压缩，移动培幸存对象到另外一端）。
+在整理阶段的方法是Sweep（清理，将废弃的对象清理）和Compact（压缩，移动幸存对象到另外一端）。
 成本相对高但是没有碎片。
 
 可由"-XX:+UseSerialOldGC"指定。
 
-## Parallel Old
+- **Parallel Old**
+
 老年代多线程并行收集器，同Parallel Scavenge收集器的一样关注吞吐量，不同的是采用了"标记-整理"算法。
 
 可由"-XX:+UseParallelOldGC"指定。
 
-## CMS
+- **CMS**
+
 老年代多线程并发标记清理收集器，关注并发收集、低停顿，也称为并发低停顿收集器（Concurrent Low Pause Collector）或低延迟（low-latency）垃圾收集器。
 采用了"标记-清除"算法(不进行压缩操作，产生内存碎片)，部分过程可以与用户线程一起工作，所以有较低的停顿。
 同样也因为抢占了部分CPU资源，对CPU资源要求较高，会引起响应较慢与总吞吐量降低。
@@ -65,7 +71,8 @@
 可由"-XX:+UseConcMarkSweepGC"指定。
 另外，在内存不够报"Concurrent Mode Failure"时，会使用"Serial Old"。
 
-## G1
+- **G1（Garbage-First）**
+
 新版垃圾收集器，仍然是并行、并发、分代收集，兼顾吞吐量和停顿时间。
 它是将整个堆划分为多个大小相等的独立区域（Region），在逻辑上进行分代，有Eden区、Survivor区、Old 区、Humongous(巨型对象)区。
 
@@ -82,9 +89,9 @@
 
 > DK7,JDK8的默认垃圾收集器的组合是：年轻代用并行吞吐量优先收集器（Parallel Scavenge），老年代用串行收集器（Serial Old）。
 > 
-> 从JDK9开始默认垃圾收集器G1（Garbage-First）。
+> 从JDK9开始默认垃圾收集器G1。
 
-# Minor GC和Full GC
+## Minor GC和Full GC
 Minor GC，指发生在新生代的垃圾收集动作，非常频繁，一般回收速度也比较快。
 
 Major GC，指发生在老年代的垃圾收集动作，速度非常慢，一般比Minor GC慢10倍以上。
@@ -95,23 +102,23 @@ Full GC，因为在Major GC同时一般伴随至少一次Minor GC（所以也可
 >
 > 当eden区满时触发Minor GC；当old区、方法区空间不足时触发Full GC，进入老年代平均大小大于可用空间时，也会触发Full GC。
 
-# JVM中的作为GCRoots
+## JVM中的作为GCRoots
 可以作为GCRoots的对象：
 虚拟机栈引用的对象、
 方法区的类静态属性引用的对象、
 方法区常量引用的对象、
 本地方法栈中Native方法引用的对象。
-# STW（Stop-The-World）
+## STW（Stop-The-World）
 在执行垃圾收集时，JVM的所有线程会挂起，让垃圾收集线程可以运行。同时native代码可以正常执行的。
 
 另外VM Threads，是JVM里有一条特殊的线程专门用来执行一些特殊的VM Operation，它也可以引起停顿，如执行Dump时。
 
-# JVM内存分配担保机制
+## JVM内存分配担保机制
 就是当在新生代无法分配内存的时候，把新生代的对象转移到老生代，然后把新对象放入腾空的新生代。
 
 这个机制主要目的是避免新生代复制大对象时产生大量的开销。
 
-# Jvm引用类型
+## Jvm引用类型
 JVM通过是否被引用来判断对象的存活，为了允许特殊控制收回时间点，定义了对象的引用类型有：强引用、软引用、弱引用、虚引用，这四种引用强度依次递减。
 
 正常情况下，程序中都是强引用，在一些特殊场景如缓存，需要使用其他几个引用类型。
