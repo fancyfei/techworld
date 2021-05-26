@@ -2,10 +2,10 @@
 
 > *git概述*
 - 分布式版本控制系统（最先进没有之一）。
-- 大神Linus（linux作者），两周时间用C写的来管理Linux源码。
+- 传说大神Linus（linux作者）花两周时间用C写的来管理Linux源码。
 - GitHub为开源项目提供免费Git存储，国内有gitee（码云）、code.aliyun.com 。
 - 自建私服，一般选用gitlab。
-- 客户端也git bash，也可以安装TortoiseGit（小乌龟）。
+- 客户端也git bash，也可以安装TortoiseGit（小乌龟），还有更强大的SourceTree（独家一键支持Git Flow）。
 
 > *主要特征*
 - 可无中心节点，可以向任意库推送代码。
@@ -16,7 +16,7 @@
 - 操作步骤比较多，命令比较多。
 
 > *与SVN的区别*
-- SVN集中式（所以我们用来管理文档）。
+- SVN集中式（所以我们常用来管理文档）。
 - git关注文件，SVN关注文件内容。
 - SVN的版本基于全局的一个有序版本号，记录差异变化。git哈希值做标识。
 - SVN拉分支相当于copy，内容多时比较慢，git分支强大得多。
