@@ -24,7 +24,7 @@ Nginx是一款轻量级的Web服务器/反向代理服务器及电子邮件（IM
 ## Nginx的进程
 
 Nginx 里有一个 master 进程和多个 worker 进程。master 进程并不处理网络请求，主要负责调度工作进程：加载配置、启动工作进程及非停升级。worker 进程负责处理网络请求与响应，多个worker进程相互独立，不加锁，这个机制可以提高性能并确保服务不会因某个进程故障而服务不响应。worker进程以异步非阻塞方式和事件驱动模型工作，可以处理多个客户端请求。
-![Nginx架构](./img/nginx_framework.png)
+![Nginx架构](nginx_framework.png)
 
 - master进程职责：响应客户端请求、将请求转发给worker、监控worker状态，当worker异常时重启新进程。
 - worker进程职责：多个进程对等独立处理客户端的请求。
@@ -32,7 +32,7 @@ Nginx 里有一个 master 进程和多个 worker 进程。master 进程并不处
 ## Nginx的模块
 
 高度模块化的设计是 Nginx 的架构基础。Nginx 服务器被分解为多个模块，每个模块就是一个功能模块，只负责自身的功能，模块之间严格遵循 “高内聚，低耦合” 的原则。
-![Nginx的模块](./img/nginx_modules.png)
+![Nginx的模块](nginx_modules.png)
 
 - 核心模块：提供核心功能，如日志、配置、事件驱动、进程管理等。
 - 标准HTTP模块：对HTTP协议进行解析，包括端口、编码、响应头等。

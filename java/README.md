@@ -17,7 +17,17 @@
 
  [io](java_io.md) Java的IO流
 
- [thread](java_thread.md) 线程模型与处理
+## Thread
+
+ [thread](thread/java_thread.md) 线程模型与处理
+
+ [jvm线程](jvm\jvm_thead.md) JVM中线程的详细内容
+
+ [线程安全](thread\thread_safe.md) 线程安全及实现
+
+ [线程锁](thread\thread_lock.md) 锁机制及优化
+
+ [线程池](thread\thread_pool.md) Java中的线程池实现
 
 ## JVM
 
@@ -38,8 +48,6 @@
 - [class文件](jvm\jvm_class_code.md) class文件结构
 
 - [jvm字节码](jvm\jvm_class_code.md) 类的字节码
-
- [jvm线程](jvm\jvm_thead.md) 线程的详细内容
 
 ## 面向对象
 [面向对象OO](oo/oo.md)，面向对象的整理
