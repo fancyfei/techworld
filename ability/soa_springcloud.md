@@ -1,12 +1,12 @@
 # 对开发框架掌握能力要求
 
 ## SOA及微服务
-- *SOA通常Rpc用WebService，框架用ESB。*
-- *SOA总线的轻量方案Nginx+hosts/dns，可配合各种RPC。*
-- *SOA最常用的框架应当还是Dubbo，Rpc用Hessian2。*
-- *Dubbo同时也可以是实现微服务的框架之一，微服务应用最广泛的还是SpringCloud那一家子。*
-- *微服务需要配置容器才能“微”，这基本上是Docker的世界了。而容器的运维被kubernetes（K8s）接管了，Swarm渐渐式微。*
-- *微服务下一代？Service Mesh（服务网格）也许准备好了。*
+- SOA通常Rpc用WebService，框架用ESB。
+- SOA总线的轻量方案Nginx+hosts/dns，可配合各种RPC。
+- SOA最常用的框架应当还是Dubbo，Rpc用Hessian2。
+- Dubbo同时也可以是实现微服务的框架之一，微服务应用最广泛的还是SpringCloud那一家子。
+- 微服务需要配置容器才能“微”，这基本上是Docker的世界了。而容器的运维被kubernetes（K8s）接管了，Swarm渐渐式微。
+- 微服务下一代？Service Mesh（服务网格）也许准备好了。
 
 ---
 > **入门**

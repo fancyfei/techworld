@@ -2,9 +2,9 @@
 
 # SpringMVC框架
 
-*SpringMVC只是Spring的一部分。*
+SpringMVC只是Spring的一部分。
 
-*SpringMVC，实现了Web MVC设计模式的请求驱动类型的轻量级Web框架，提供了全功能 MVC 模块。*
+SpringMVC，实现了Web MVC设计模式的请求驱动类型的轻量级Web框架，提供了全功能 MVC 模块。
 
 ---
 > **入门**
