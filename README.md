@@ -5,8 +5,8 @@
 - [读书](read/README.md)
 
 ## 开发
-- [编码相关](code/README.md)
-- [Java编程语言](java/README.md)
+- [编码相关](code/README.md)，算法、设计模式、DDD，等等。
+- [Java编程语言](java/README.md)，Java基础知识提炼，JVM重点知识笔记，多线程笔记，Spring框架，等等。
 - [前端相关](frontend/README.md)
 - [网络相关](net\README.md) 
 
