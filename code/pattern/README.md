@@ -8,3 +8,4 @@
 
 - [工厂模式](pattern_factory.md) ，简单工厂模式、工厂方法模式、抽象工厂模式。
 
+- [单例模式](pattern_singleton.md) ，单例模式的几种实现方式。
