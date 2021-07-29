@@ -25,35 +25,35 @@
 
  [thread](thread/java_thread.md) 线程模型与处理
 
- [jvm线程](jvm\jvm_thead.md) JVM中线程的详细内容
+ [jvm线程](jvm/jvm_thead.md) JVM中线程的详细内容
 
- [线程安全](thread\thread_safe.md) 线程安全及实现
+ [线程安全](thread/thread_safe.md) 线程安全及实现
 
- [线程锁](thread\thread_lock.md) 锁机制及优化
+ [线程锁](thread/thread_lock.md) 锁机制及优化
 
- [线程池](thread\thread_pool.md) Java中的线程池实现
+ [线程池](thread/thread_pool.md) Java中的线程池实现
 
 ## JVM
 
- [jvm](jvm\jvm.md) ，JVM概述
+ [jvm](jvm/jvm.md) ，JVM概述
 
- [jvm内存模型](jvm\jvm_memory_model.md) 内存模型所包含的内容
+ [jvm内存模型](jvm/jvm_memory_model.md) 内存模型所包含的内容
 
- [jvm_gc](jvm\jvm_gc.md) JVM中垃圾回收器
+ [jvm_gc](jvm/jvm_gc.md) JVM中垃圾回收器
 
- [jvm类加载](jvm\jvm_class_load.md) 类加载过程
+ [jvm类加载](jvm/jvm_class_load.md) 类加载过程
 
--  [jvm类加载器](jvm\jvm_classloader.md) ，类加载器分类
+-  [jvm类加载器](jvm/jvm_classloader.md) ，类加载器分类
 
- [jvm运行时](jvm\jvm_runtime.md) 运行原理过程
+ [jvm运行时](jvm/jvm_runtime.md) 运行原理过程
 
-- [栈帧](jvm\jvm_stack.md) 栈帧结构
-- [方法调用](jvm\jvm_method_invoke.md) 方法调用过程
-- [class文件](jvm\jvm_class_code.md) class文件结构
+- [栈帧](jvm/jvm_stack.md) 栈帧结构
+- [方法调用](jvm/jvm_method_invoke.md) 方法调用过程
+- [class文件](jvm/jvm_class_code.md) class文件结构
 
-- [jvm字节码](jvm\jvm_class_code.md) 类的字节码
+- [jvm字节码](jvm/jvm_class_code.md) 类的字节码
 
 ## 框架
 
- [Spring](spring\README.md) ，关于Spring框架
+ [Spring](spring/README.md) ，关于Spring框架
 
