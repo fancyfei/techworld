@@ -1,7 +1,7 @@
 # 编码相关
 [编码风格](code_style.md)
 
- [算法](algorithm/README.md) ，常见算法与设计思想
+[算法](algorithm/README.md) ，常见算法与设计思想
 
 
 
