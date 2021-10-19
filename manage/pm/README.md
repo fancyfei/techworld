@@ -40,7 +40,17 @@
 
 [pm_stakeholder](pm_stakeholder.md) 项目相关方管理。
 
-相关理论
+## 项目阶段
+
+ [initiating](pm_life_initiating.md) 项目启动。
+
+ [planning](pm_life_planning.md) 项目规划。
+
+ [executing](pm_life_executing.md) 项目执行与监控。
+
+ [closing](pm_life_closing.md) 项目收尾。
+
+## 相关理论
 
 [stacey模型](pm_stacey.md) ，为企业复杂的项目进行分类
 
