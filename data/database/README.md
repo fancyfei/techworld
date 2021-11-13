@@ -1,14 +1,14 @@
 ## 数据库
 
- [structure](db_structure.md) 体系结构
+[structure](db_structure.md) 数据库管理系统的体系结构
 
-存储？
+[storage](db_storage.md) 数据库的数据存储
 
-事务/锁
-
-索引
+[index](db_index.md) 索引
 
 恢复，undo/redo日志
+
+事务/锁
 
 ## Mysql
 
