@@ -4,11 +4,11 @@
 
 [storage](db_storage.md) 数据库的数据存储
 
-[index](db_index.md) 索引
+[index](db_index.md) 数据库的索引原理及分类
 
-恢复，undo/redo日志
+[recovery](db_recovery.md) 恢复子系统、日志系统，undo/redo日志
 
-事务/锁
+[transaction](db_transaction.md) 事务/锁
 
 ## Mysql
 
