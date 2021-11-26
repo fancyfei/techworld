@@ -14,11 +14,12 @@
 
 [mysql_structure](mysql_structure.md) Mysql架构
 
-InnoDB架构
+[mysql_innodb](mysql_innodb.md) InnoDB架构
 
 复制
 
-索引
+分区
 
-优化
+锁
 
+ 
