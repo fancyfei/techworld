@@ -4,5 +4,7 @@
 
 [产品](pm\README.md) 产品设计相关，分析业务的关键技术，并落地于具体设计。
 
-[DDD](domain/README.md) ，需求分析中的领域模型分析与DDD
+[DDD](domain/README.md) ，需求分析中的领域模型分析与DDD。
+
+
 

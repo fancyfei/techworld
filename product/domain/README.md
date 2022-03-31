@@ -12,6 +12,8 @@
 
  [战术建模](ddd_domain_model.md) ，DDD的战术建模，领域模型。
 
+ [cqrs](ddd_cqrs.md) ，命令与查询模型分离设计模式
+
 
 
 

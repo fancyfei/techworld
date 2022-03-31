@@ -22,6 +22,10 @@
 
 [y](requirement_y.md)，分析过程“Y”模型
 
+[swot](requirement_swot.md) ，用于战略分析的模型
+
+[5w2h](requirement_5w2h.md) ，分析问题的七问分析法
+
 ## 产品设计过程
 
 [rd](product_rd.md)，产品设计
