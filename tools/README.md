@@ -15,6 +15,8 @@
 
 [maven依赖](maven_dependency.md)
 
+[nexus](maven_nexus_install.md) Mavne仓库nexus的安装
+
 ## Sonar
 
 [sonar](sonar.md)
