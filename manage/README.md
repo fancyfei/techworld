@@ -1,4 +1,4 @@
-# 团队提升
+# 管理及提升
 
 - 开发团队需要注意的事项
 
@@ -18,11 +18,13 @@
 
 - 团队管理
 
-mbo
+[smart](team\mbo_smart.md) ，管理目标的SMART原则
 
-mbo-smart
+[kpi](team\kpi.md) ，关键绩效指标(Key Performance Indicator)
 
-kpi
+[mbo](team\mbo.md) ，目标管理(Management by Objective,MBO)
 
-okr
+[okr](team\okr.md) ，目标与关键成果（Objectives and Key Results）
+
+
 
