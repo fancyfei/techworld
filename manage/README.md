@@ -26,5 +26,7 @@
 
 [okr](team\okr.md) ，目标与关键成果（Objectives and Key Results）
 
+[okr_kpi](team\okr_kpi.md) ，okr与kpi比较
 
+[dev_kpi](team\dev_kpi.md) ，开发团队的指标库
 
