@@ -6,7 +6,7 @@
 2. “功能驱动式开发”：先有需求再有功能分支或者补丁分支，合并主分支后删除工作分支。
 3. 常见的策略：Git flow（master+develop），Github flow（master持续发布），Gitlab flow（主分支master作“上游”）。
 
-![git_flow](img/git_flow.png)
+![git_flow](git_flow.png)
 > Git flow（master+develop“版本发布”）
 
 1. 主分支：用master分支稳定的发布版本，一般设置保护，不可提交。
@@ -17,7 +17,7 @@
 
 注：基于“版本发布”的 Git flow 是最早诞生、并得到广泛采用的一种工作流程。比较复杂。
 
-![git_flow_git](img/git_flow_git.png)
+![git_flow_git](git_flow_git.png)
 > Github flow（master“持续发布”）
 1. 只有一个长期分支，就是 master 。
 2. 从 master 拉出新分支，不区分功能分支或补丁分支。
@@ -25,7 +25,7 @@
 
 注：基于“持续发布”的 Github flow 比较适合网站或平台项目类。另外需要再配置一个发布跟踪分支，跟踪发布的版本。
 
-![git_flow_hub](img/git_flow_hub.png)
+![git_flow_hub](git_flow_hub.png)
 > Gitlab flow（主分支master作“上游”）
 1. 只存在一个主分支 master ，是其他分支的"上游"。修改合并后，才会到其他的分支。
 2. “持续发布”的项目，在 master 分支以外，再建立不同的环境分支。开发有“开发分支”（master），生产有“生产分支”（production）。
@@ -36,7 +36,7 @@
 
 注：Gitlab flow 是 Git flow 与 Github flow 的结合。对不同的项目不同管理方式。最大原则叫做"上游优先"（upsteam first）。只有上游分支采纳的代码变化，才能应用到其他分支。
 
-![git_flow_lab](img/git_flow_lab.png)
+![git_flow_lab](git_flow_lab.png)
 
 ---
 > 人员协作方式
@@ -54,5 +54,5 @@
     - 司令官合并副官的分支到自己的主干分支。再推送到基准项目仓库。
 
 > 注：
-
-小团队时集中式工作流；大项目选择集成管理员工作流；司令官与副官工作流不常见。
+>
+> 小团队时集中式工作流；大项目选择集成管理员工作流；司令官与副官工作流不常见。

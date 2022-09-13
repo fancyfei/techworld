@@ -12,7 +12,7 @@
 
 - 项目管理
 
- [项目管理](pm/README.md)，PM的领域知识
+ [项目管理](pm/README.md)，PM的领域知识集合
 
 
 
@@ -30,3 +30,8 @@
 
 [dev_kpi](team\dev_kpi.md) ，开发团队的指标库
 
+- 敏捷
+
+[agile](agile\agile.md) 敏捷项目管理
+
+[scrum](agile\scrum.md) ，“橄榄球”式敏捷方法

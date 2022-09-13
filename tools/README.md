@@ -1,31 +1,31 @@
 # 工具相关
 ## Git
 
-[git概念](git.md)
+[git概念](develop/git.md)
 
-[git分支](git_branch.md)
+[git分支](develop/git_branch.md)
 
-[git最佳实践](git_operate.md)
+[git最佳实践](develop/git_operate.md)
 
-[git部分概念的原理](git_things.md)
+[git部分概念的原理](develop/git_things.md)
 
 ## Maven
 
-[maven了解](maven.md)
+[maven了解](develop/maven.md)
 
-[maven依赖](maven_dependency.md)
+[maven依赖](develop/maven_dependency.md)
 
-[nexus](maven_nexus_install.md) Mavne仓库nexus的安装
+[nexus](develop/maven_nexus_install.md) Mavne仓库nexus的安装
 
 ## Sonar
 
-[sonar](sonar.md)
+[sonar](develop/sonar.md)
 
-[sonar安装及配置](sonar_install.md)
+[sonar安装及配置](develop/sonar_install.md)
 
 ## Jenkins
 
-[jenkins了解](jenkins.md)
+[jenkins了解](deploy/jenkins.md)
 
-[jenkins安装配置](jenkins_install.md)
+[jenkins安装配置](deploy/jenkins_install.md)
 

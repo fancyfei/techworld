@@ -1,19 +1,34 @@
 # 笔记本
+学习要有“系统”，一定要建立一套完整的知识体系，并理解其中的逻辑关系。
+
+
+
 ## 个人提升
-- [团队提升](manage/README.md)
+
+事物之间的关系，很多时候，并非“非黑即白”的关系，而是存在着博弈和可能，存在着多样性。允许更多的可能性，你才能有更多的机会。
+
 - [读书](read/README.md)
 
 ## 研发
+
+每一种思维模式，都有其对应的适用场景；反之，每一种场景，也必然有与其相应的思维模式。
+
 - [研发基础](code/README.md)，算法、设计模式，等等。
 - [Java编程语言](java/README.md)，Java基础知识提炼，JVM重点知识笔记，多线程笔记，Spring框架，等等。
-- [前端相关](frontend/README.md)
-- [网络相关](net\README.md) 
-- [产品相关](product\README.md) 、产品的分析、设计、迭代。
-- [项目管理](manage\README.md) ，管理项目的生命周期。
+- [前端相关](frontend/README.md)，VUE等。
+- [网络相关](net/README.md) 
 
-## 大数据
+## 项目
 
-- [数据相关](data/README.md)
+需求分析设计，管理项目，团队效能。
+
+- [产品相关](product/README.md) 、产品的分析、设计、迭代。
+- [管理](manage/README.md) ，管理项目的生命周期。敏捷。团队提升。
+
+## 服务端
+
+- [数据相关](data/README.md)，数据库，NoSQL。
+- [云上服务](cloud\README.md) ，AWS云，服务器相关。
 
 ## 效率
 - [工具的使用](tools/README.md)

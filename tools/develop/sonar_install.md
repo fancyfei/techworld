@@ -1,6 +1,9 @@
 # sonar安装及配置
 
+SonarQube 是一个代码分析平台，他使用Java语言开发，由两部分组成，一个是web界面管理平台，另一个是sonar-scanner扫描器。
+
 # linux服务器上安装sonar
+
 1. 准备环境，安装JDK，注意安装1.8及以上，如果是openjdk，需要devel版本。
 2. 下载sonar的zip包，如sonarqube-7.3.zip，然后解压到/usr/local。
 3. 修改/config/sonar.properties文件，主要是数据库配置：sonar.jdbc.username=xx sonar.jdbc.password=yy sonar.jdbc.url=zz 都有示例。其他的配置看官方文档。有个参数sonar.web.port是指定sonar web端口号的。

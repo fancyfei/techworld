@@ -58,4 +58,4 @@ resources
 ... static         js/css/image
 ... template       页面部分
 ```
-![maven-logo](img/maven-logo.png)
+![maven-logo](maven-logo.png)
