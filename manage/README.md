@@ -30,6 +30,8 @@
 
 [dev_kpi](team\dev_kpi.md) ，开发团队的指标库
 
+[pdca](team\pdca.md) Plan-Do-Check-Act循环，叫质量环，又被称为“戴明环”
+
 - 敏捷
 
 [agile](agile\agile.md) 敏捷项目管理

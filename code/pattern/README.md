@@ -37,3 +37,6 @@
 - 备忘录模式（Memento）：快照交给专业人处理。
 - 解释器模式（Interpreter）：编译或分析。
 
+## 其他模式
+
+- [规格模式](pattern_specification.md)（Specification），组合模式的一种扩展，可以灵活地对业务逻辑进行定制。
