@@ -11,6 +11,7 @@
 - `@EnableScheduling`：标注在配置类上，开启定时任务；
 - `@Scheduled`：标注在任务方法上，声明触发策略，方法所在类必须注册为 Spring Bean。
 
+### 1.1 @Scheduled注解
 ```java
 @SpringBootApplication
 @EnableScheduling
@@ -32,21 +33,43 @@ public class ReportTask {
 }
 ```
 
+### 1.2 编程式注册：SchedulingConfigurer
+
+注解方式的任务在编码期就固定了。触发策略要从数据库或配置中心动态读取、任务列表运行期可变时，改用 `SchedulingConfigurer` 编程式注册：
+```java
+@Configuration
+@EnableScheduling
+public class DynamicSchedulingConfig implements SchedulingConfigurer {
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar registrar) {
+        // Trigger 任务：Runnable task, Trigger trigger
+        registrar.addTriggerTask(this::runTaskFunc,
+            triggerContext -> new CronTrigger("0/10 * * * * ?")
+                    .nextExecution(triggerContext));
+        // 其他的addXxxTask还有cron 任务、固定间隔任务、固定频率任务
+    }
+}
+```
+
+与注解方式的区别：
+
+- `addTriggerTask` 的 `Trigger` 回调在每次执行后都会被调用来计算下次触发时间，运行期可以修改 cron 下一次重新计算触发时间；
+- 需要运行期动态增删任务时，用 `registrar.scheduleCronTask(...)` 系列方法（返回 `ScheduledTask`，持有引用即可 `cancel()` 取消），`addXxxTask` 注册的任务无法在运行期单独摘除；
+- 同一个 `registrar` 上可同时设置线程池， `registrar.setTaskScheduler(...)`。
+
+
 ## 2 触发方式
 
-`@Scheduled` 的触发参数五选一：fixedRate、fixedRateString、fixedDelay、fixedDelayString、cron。
+`@Scheduled` 主要提供三种周期触发方式：fixedRate、fixedDelay 和 cron。此外还可以通过 initialDelay 控制首次执行时间，并通过 timeUnit、zone、scheduler 等属性进一步控制调度行为。
 
 ### fixedRate 与 fixedDelay
 
 都接受毫秒值，区别在于时间基准：
 
-- `fixedRate`：以上一次任务**开始时间**为基准，按固定频率触发。任务耗时超过间隔时，下一次紧随执行，不等待。
-- `fixedDelay`：以上一次任务**结束时间**为基准，结束后再等固定间隔。
-
-| 参数                | 时间基准     | 上次耗时 8s、间隔 5s 时 |
-| ------------------- | ------------ | ----------------------- |
-| `fixedRate = 5000`  | 上次开始时间 | 立即执行下一次          |
-| `fixedDelay = 5000` | 上次结束时间 | 再等 5 秒执行           |
+| 参数                | 时间基准     | 上次耗时 8s、间隔 5s 时      |
+| ------------------- | ------------ | ---------------------------- |
+| `fixedRate = 5000`  | 上次开始时间 | 当前任务结束后尽快执行下一次 |
+| `fixedDelay = 5000` | 上次结束时间 | 再等 5 秒执行                |
 
 fixedRate 适合要求固定节奏的场景（定时刷新缓存）；fixedDelay 适合任务间不允许重叠的场景（轮询外部接口）。
 
@@ -86,9 +109,10 @@ public void syncData() { ... }
 
 ## 3 使用约束
 
-1. 方法必须无参、公开，返回值被忽略。
-2. 方法所在类必须是 Spring 容器管理的 Bean，否则注解不生效。
+1. 方法必须无参，返回值被忽略。
+2. 方法所在对象需要由 Spring 容器管理。
 3. `fixedRate` 不是精确频率。受调度线程竞争和任务耗时影响，实际触发时间存在抖动；有精度要求的场景需配置独立线程池（见 1.4）或使用专用调度系统。
+4. 同一个 @Scheduled 方法可以通过可重复注解配置多个调度规则，但多个规则可能并发或连续触发。
 
 ## 4 单线程阻塞
 
@@ -114,8 +138,6 @@ public class SchedulingConfig implements SchedulingConfigurer {
 }
 ```
 
-`poolSize` 按"可能同时执行的任务峰值数"评估，任务间无重叠时 4~8 足够。
-
 Spring Boot 下不需要深度定制时，直接用配置项：
 
 ```yaml
@@ -132,7 +154,7 @@ spring:
 内部业务耗时长时，用 `@Async` 把它转移到独立业务线程池，调度线程立即释放：
 
 ```java
-@Async("bizExecutor")            // 独立业务线程池，默认每次新建
+@Async("bizExecutor")            // 独立业务线程池
 @Scheduled(fixedDelay = 60_000)
 public void heavyTask() {
     // 耗时操作
@@ -195,6 +217,8 @@ public class AsyncConfig implements AsyncConfigurer {
     }
 }
 ```
+
+Spring 6.1 开始，`@Scheduled` 还支持返回 Reactive `Publisher` 的方法，其异常处理机制有所不同。
 
 ## 6 集群防重
 
