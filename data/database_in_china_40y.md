@@ -10,6 +10,6 @@
 
 > 图
 
-![git_flow_git](img/database_history_cn.jpg)
+![git_flow_git](database_history_cn.jpg)
 
 `此图系转载，如有版权侵犯请联系将及时删除。`

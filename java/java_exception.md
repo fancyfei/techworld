@@ -12,7 +12,7 @@ Java定义了非常多的异常类，它们以Throwable为根，分为两个方�
 
 异常有unchecked exception (未受检异常)，与checked exception (受检异常)。checked异常，Java会强制要求程序员进行处理，否则会有编译错误，而对于unchecked异常则没有这个要求。
 
-![image-20210524151451798](img\java_exception_class.png)
+![image-20210524151451798](java_exception_class.png)
 
 - Throwable，是所有异常的基类，它有两个子类Error和Exception。
 

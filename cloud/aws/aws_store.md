@@ -42,4 +42,4 @@ Amazon EFS 提供两个存储类：标准存储类和不频繁访问存储类 (E
 
 ## AWS 存储的关系
 下图显示了这些存储选项和实例之间的关系。
-![AWS的储存](img/aws_architecture_storage.png)
+![AWS的储存](aws_architecture_storage.png)

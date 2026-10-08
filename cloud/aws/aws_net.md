@@ -6,6 +6,8 @@ AWS所抽象过的网络组件，隐藏了很多现实中网络的细节。
 子网通过互联网关（Internet Gateways）连通外网，如果子网中多EC2使用同一个互联网关，则可以通过NAT网关中转，访问规则记录在路由表（Routing Tables）。
 子网之间可默认可访问，但是可以对ACL和Security Group进行访问控制。
 
+![aws_architecture_network](aws_architecture_network.png)
+
 ## 常见的网络及访问控制
 - 互联网访问，通过IGW互联网关（Internet Gateways）。
 - VPC内网，默认可访问，权限由ACL和SG（Security Group）控制。
@@ -72,4 +74,4 @@ AWS所抽象过的网络组件，隐藏了很多现实中网络的细节。
 
 完整的拓扑如下：
 
-![AWS的网络打通](img/aws-site-to-site-vpn.png)
+![AWS的网络打通](aws-site-to-site-vpn.png)

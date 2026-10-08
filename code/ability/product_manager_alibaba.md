@@ -6,6 +6,6 @@
 
 > 图
 
-![能力框架](img/product_manager_ability.jpg)
+![能力框架](product_manager_ability.jpg)
 
 `此图系转载，如有版权侵犯请联系将及时删除。`

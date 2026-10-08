@@ -4,7 +4,7 @@ I/O 即输入Input/ 输出Output，其实就是计算机调度把各个存储中
 
 通过抽象的“流”的形式允许程序使用相同的方式来访问不同的输入/输出源，封装成各种“类”，都放在java.io这个包里面。
 
-![io](./img/java_io_frame.png)
+![io](java_io_frame.png)
 
 ## 流的抽象
 
@@ -27,7 +27,7 @@ java中用“流（stream）”来抽象输入输出的功能，表示从起源�
 
 ## 常见的处理流
 
-![java_io_class](img\java_io_class.png)
+![java_io_class](java_io_class.png)
 
 - 缓冲流：在读入或写出时，对数据进行缓存，以减少I/O的次数。
 - 抽象的过滤流：在数据进行读或写时进行过滤。
