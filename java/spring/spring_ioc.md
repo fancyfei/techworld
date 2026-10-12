@@ -1,52 +1,51 @@
-# Spring的核心IOC容器
+# Spring 的 IoC 容器
 
-IOC（Inversion of Control）即“控制反转”，把对象交给容器控制，而不是在自己的对象内部直接控制。它是一种思想，能指导松耦合设计。具体实现是在程序运行时，动态的向某个对象提供它所需要的其他对象，这一点是通过DI来实现的。
+IoC（Inversion of Control）即“控制反转”：把对象的创建和依赖关系交给容器管理，而不是在对象内部自己控制。它是一种思想，用于指导松耦合设计；具体落地是在程序运行期，动态地向一个对象提供它所需要的其他对象，这一机制通过 DI 实现。
 
-DI（Dependency Injection）即“依赖注入”，组件之间依赖关系由容器在运行期决定，Spring就是通过反射，将IOC容器内托管的对象注入到需要的对象中。
+DI（Dependency Injection）即“依赖注入”：组件之间的依赖关系由容器在运行期决定，Spring 通过反射把容器内托管的对象注入到需要它的对象中。
 
-## IOC容器的实现
+## 容器的实现
 
-IOC容器就是工厂模式的典型应用，它是个Bean工厂，用来管理所有的对象以及依赖关系。还提供了 Bean 实例缓存、生命周期管理、 Bean 实例代理、事件发布、资源装载等高级服务。
+IoC 容器是工厂模式的典型应用，它本质是一个 Bean 工厂，管理所有 Bean 及它们之间的依赖关系，并提供 Bean 实例缓存、生命周期管理、Bean 实例代理、事件发布、资源装载等高级服务。
 
 ![spring_ioc_implement](spring_ioc_implement.jpg)
 
-Spring 启动时读取应用程序提供的Bean配置信息，并在Spring容器中生成一份相应的Bean配置注册表，然后根据这张注册表实例化Bean，装配好Bean之间的依赖关系。一般情况下上层应用无需关注此过程，容器自动装配完成，当然也可直接调用getBean获取。
+Spring 启动时读取应用程序提供的 Bean 配置信息，在容器中生成一份相应的 Bean 配置注册表，再根据这张注册表实例化 Bean、装配好 Bean 之间的依赖关系。上层应用一般无需关注这一过程，由容器自动装配完成，也可以直接调用 `getBean()` 获取 Bean。
 
-为Spring容器提供配置元数据的主要方式有xml配置文件、注解配置、Java的配置@Configuration等。
+为 Spring 容器提供配置元数据的方式主要有三种：XML 配置文件、注解配置、Java 配置（`@Configuration`）。
 
-对已经实例化的单实例Bean，Spring放在HashMap 实现的缓存单实例 Bean 的缓存器。
+对已经实例化的单例 Bean，Spring 将其缓存在一个以 HashMap 为数据结构的单例缓存器中。
 
-## IOC 容器的体系
+## 容器的体系
 
 ![spring_ioc_bean_intf](spring_ioc_bean_intf.png)
 
-在Spring中BeanFactory是IOC容器的实际实现者，它提供了最初级的功能，有最基本的DI支持。ApplicationContext则是较高级的容器，也被称为 Spring 上下文。另外还有面向Web应用的容器。
+BeanFactory 是 IoC 容器的基础接口，提供最基本的 DI 支持；ApplicationContext 继承自 BeanFactory，是较高级的容器，也被称为 Spring 上下文；此外还有面向 Web 应用的容器。
 
-- BeanFactory，是 Spring 框架的基础设施，主要是面向 Spring 本身。它会缓存单实例（ singleton）的 Bean，以 beanName 为key保存在DefaultSingletonBeanRegistry 类中的HashMap 中。BeanFactory体系的直接实现类有DefaultListableBeanFactory。
-- ApplicationContext，才是面向应用程序的开发者。是BeanFactory的派生类，有两个最重要的实现类，ClassPathXmlApplicationContext：默认从类路径加载配置文件；FileSystemXmlApplicationContext：默认从文件系统中装载配置文件。
-- WebApplicationContext，ApplicationContext子类中专门为 Web 应用准备的，它允许从相对于 Web 根目录的路径中装载配置文件完成初始化工作。把整个 Web 应用上下文对象作为属性放置到 ServletContext 中，key为常量ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE。它有两个重要的实现类：AnnotationConfigWebApplicationContext、XmlWebApplicationContext。
+- **BeanFactory**：Spring 框架的基础设施，主要面向 Spring 本身使用。它会缓存单例（singleton）Bean，以 beanName 为 key 保存在 `DefaultSingletonBeanRegistry` 的 `singletonObjects`（一个 ConcurrentHashMap）中。BeanFactory 体系的直接实现类是 `DefaultListableBeanFactory`。
+- **ApplicationContext**：面向应用程序开发者，是 BeanFactory 的子接口。常见的实现类有 `ClassPathXmlApplicationContext`（默认从类路径加载配置文件）、`FileSystemXmlApplicationContext`（默认从文件系统加载配置文件）、`AnnotationConfigApplicationContext`（基于 Java 配置类启动）。
+- **WebApplicationContext**：ApplicationContext 子接口中专门为 Web 应用准备的容器，允许从相对于 Web 根目录的路径装载配置文件完成初始化。初始化后，整个 Web 应用上下文对象会作为属性放置到 `ServletContext` 中，key 为常量 `ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE`。常见的实现类有 `XmlWebApplicationContext` 和 `AnnotationConfigWebApplicationContext`。
+
+BeanFactory 与 ApplicationContext 的一个关键区别在实例化时机：BeanFactory 采用懒加载，只有调用 `getBean()` 时才创建 Bean；ApplicationContext 在容器启动时就会实例化所有单例 Bean，配置错误能在启动阶段尽早暴露。日常开发基本都使用 ApplicationContext。
 
 ## 容器的组件构成
 
-IoC容器中有很多较为重要的协助组件，这些组件都是为BeanFactory组件工作的（但不是仅仅为其服务），常见的主要组件有：
+IoC 容器内部有若干重要组件，彼此协作完成 Bean 的加载与注册：
 
-- **Resource**：资源组件，是Spring内部对资源的一种统一描述，不同资源文件如xml、properties文件等，格式不同，由ResourceLoader加载获得相应的Resource对象。有具体ClassPathResource、FileSystemResource、UrlResource等类型。
-- **BeanDefinition**：Bean描述组件，BeanDefinition体系是Spring内部对Bean相关信息的基本数据结构，包括属性、构造方法参数、依赖的 Bean 名称及是否单例、延迟加载等，同时也提供了一系列操作 Bean 元数据的set、get方法。它是实例化 Bean 的原材料，Spring 就是根据 BeanDefinition 中的信息实例化 Bean。整体上分两类，一个描述通用的Bean，用在xml定义的<bean>标签，另外一个是描述注解形式的Bean。
+- **Resource**：资源组件，Spring 对资源的统一抽象，XML、properties 等不同格式的资源文件由 ResourceLoader 加载后得到相应的 Resource 对象，有 `ClassPathResource`、`FileSystemResource`、`UrlResource` 等具体类型。
+- **ResourceLoader**：资源加载组件，负责加载 XML、properties 等各类资源并解析生成 Resource 对象。`DefaultResourceLoader` 是其默认实现；`ResourcePatternResolver` 在其上提供各种资源匹配模式（如 classpath\* 通配）。
+- **BeanDefinition**：Bean 描述组件，Spring 内部表示 Bean 信息的基本数据结构，包含属性、构造方法参数、依赖的 Bean 名称、是否单例、是否延迟加载等元数据，并提供了一系列读写这些元数据的方法。它是实例化 Bean 的原材料。
+- **BeanDefinitionReader**：Bean 构造组件，利用 ResourceLoader 读取 Resource，把资源中的数据转换成对应的 BeanDefinition 对象，再利用 BeanDefinitionRegistry 完成注册。
+- **BeanRegistry**：Bean 注册组件。`BeanDefinitionRegistry` 负责把 BeanDefinition 注册到容器（`beanDefinitionMap`）中；`SingletonBeanRegistry` 负责注册单例 Bean 的实例，二者职责不同。
 
-- **ResourceLoader**：资源加载组件，负责加载xml、properties等各类资源，解析并生成Resource对象。它有两个子接口，DefaultResourceLoader是ResourceLoader的默认实现；另外一个是ResourcePatternResolver是为了提供各种资源匹配模式。
+## 容器的初始化过程
 
-- **BeanRegistry**：Bean注册组件，SingletonBeanRegistry/BeanDefinitionRegistry，将BeanDefinition对象注册到BeanFactory（BeanDefinition Map）中去。
-- **BeanDefinitionReader**：Bean构造组件，它利用ResourceLoader读取Resource并将其数据转换成对应的BeanDefinition对象，利用BeanDefinitionRegistry完成注册。
+不论使用 BeanFactory 系列还是 ApplicationContext 系列创建容器，最终基本都会用到 `DefaultListableBeanFactory`，它也是实际默认的 IoC 容器。
 
-## IOC容器初始化过程
+ApplicationContext 的各个子类创建 IoC 容器时，最终都会调用 `AbstractApplicationContext` 的核心方法 `refresh()`，完整的初始化过程在其中完成，核心有三个步骤：
 
-不论是使用BeanFactory系列还是ApplicationContext系列来创建容器基本都会使用到DefaultListableBeanFactory类，它也是实际上默认的IOC容器。
+- **Resource 定位**：定位 Bean 的定义文件。ResourceLoader 接口提供不同的 Resource 加载策略，把各类资源转换为 Resource 对象。
+- **BeanDefinition 载入**：把定位好的资源载入为 BeanDefinition，将 Bean 的信息实例化为 BeanDefinition 对象。
+- **BeanDefinition 注册**：调用 BeanDefinitionRegistry，把 BeanDefinition 对象注册到 IoC 容器（`beanDefinitionMap`）中。
 
-ApplicationContext的各种子类创建IOC容器，最终都会调用AbstractApplicationContext的一个重要方法refresh()，这里面包含了完整过程。在IOC容器初始化过程核心有三个步骤。
-
-- Resource定位（Bean的定义文件定位），ResourceLoader接口实现了不同的Resource加载策略，将不同的资源转换为resource对象。
-- 将Resource定位好的资源载入到BeanDefinition，把Bean的信息实例化为BeanDefiniton对象。
-- 将BeanDefiniton注册到容器中，调用BeanDefinitionRegistry，把BeanDefiniton对象注入到IOC容器（beanDefinitionMap）中，完成注册。
-
-经过这几步后，IOC容器维护了整个Bean的配置信息，以BeanDefiniton对象为形式放置在beanDefinitionMap中，供下一步的依赖注入（getBean）时检索与使用。
-
+经过这三步，IoC 容器就以 BeanDefinition 对象的形式维护了整个 Bean 的配置信息，放置在 `beanDefinitionMap` 中，供后续依赖注入（`getBean()`）时检索与使用。
