@@ -1,317 +1,271 @@
 # Spring事务处理核心原理
 
-## 一、管理体系
+## Spring事务的特点与设计
 
-Spring 事务管理体系将事务管理行为、事务属性定义和事务执行状态分离：事务管理器执行事务操作，事务定义描述事务运行规则，事务状态记录执行期间的状态与控制信息。
+### 1. 事务的基本特性
 
-### 1.1 PlatformTransactionManager：事务管理的统一入口
+数据库事务遵循 ACID 四大特性：
 
-`PlatformTransactionManager` 是 Spring 本地事务管理体系的核心接口，将不同底层资源的事务操作统一为三个动作：
+- **原子性（Atomicity）**：事务中的操作要么全部成功，要么全部失败回滚。
+- **一致性（Consistency）**：事务执行前后，数据库都满足既定的约束和业务规则。
+- **隔离性（Isolation）**：并发事务之间相互隔离，避免不符合隔离级别要求的数据干扰。
+- **持久性（Durability）**：事务提交后，数据变更能够持久保存。
 
-```
-public interface PlatformTransactionManager extends TransactionManager {
+ACID 是数据库事务的基本要求。Spring 不负责重新实现数据库的原子性和持久性，而是通过事务管理器、事务资源和事务控制机制，协调应用程序与底层事务资源之间的关系。
 
-    TransactionStatus getTransaction(
-            TransactionDefinition definition) throws TransactionException;
+### 2. Spring事务的核心特点
 
-    void commit(TransactionStatus status) throws TransactionException;
+**统一事务抽象。** Spring 将不同底层事务资源的操作统一到 `PlatformTransactionManager` 接口中。应用代码不需要直接编写 JDBC 的 `commit()`、`rollback()`，也不需要针对不同持久化技术实现不同的事务控制逻辑。
 
-    void rollback(TransactionStatus status) throws TransactionException;
-}
-```
+**声明式事务。** 通过 `@Transactional` 描述方法的事务属性，由 Spring 在方法执行前后完成事务创建、提交、回滚等操作。业务代码与事务管理代码分离。
 
-- `getTransaction()`：按事务定义获取事务。当前无符合条件的事务则创建新事务；已存在事务则按传播行为决定加入、挂起或其他处理方式。
-- `commit()`：完成当前事务作用域的提交处理。参与外层事务或已被标记为只能回滚时，不会立即提交底层事务。
-- `rollback()`：执行当前事务作用域的回滚处理。参与外层事务时，可能只是将整个事务标记为只能回滚，而不是直接回滚底层数据库事务。
+**编程式事务。** 通过 `TransactionTemplate` 或 `PlatformTransactionManager` 显式控制事务边界，适用于需要在同一个方法中精确划定事务范围、动态决定事务执行方式的场景。
 
-JDBC 用 `Connection` 的 `commit()`、`rollback()`、`setAutoCommit()` 控制本地事务；JPA 通过 `EntityTransaction` 或持久化提供者管理；JTA 通过事务协调接口管理。Spring 不统一底层 API，只统一事务管理契约。
+**统一管理事务边界。** Spring 可以根据事务传播行为决定当前方法加入已有事务、创建新事务，或者在没有事务的情况下执行。
 
-JDBC 场景由 `DataSourceTransactionManager` 管理连接及事务状态，Spring 5.3 起还提供其子类 `JdbcTransactionManager`，差别仅在提交/回滚时把 SQL 异常转换为 `DataAccessException` 体系（与 `JdbcTemplate` 一致）。它们做的不只是转发方法调用，还包括连接获取、事务开启、资源绑定、提交回滚和资源清理。
+**依赖底层事务资源。** Spring 提供事务管理抽象，但事务最终由数据库连接、JPA 持久化上下文或其他事务资源执行。
 
-### 1.2 TransactionDefinition：事务属性的元数据契约
+### 3. 声明式事务与编程式事务
 
-`TransactionDefinition` 不负责开启、提交或回滚事务，只为事务管理器提供处理依据。核心属性有四个：
+声明式事务通常使用 `@Transactional`：
 
-```
-public interface TransactionDefinition {
-
-    int getPropagationBehavior();
-
-    int getIsolationLevel();
-
-    int getTimeout();
-
-    boolean isReadOnly();
-
-    String getName();
-}
-```
-
-- 传播行为（Propagation）：决定当前方法调用与已有事务的关系——加入、挂起后新建，还是在无事务环境执行。
-- 隔离级别（Isolation）：事务对并发数据访问的隔离要求，最终映射到具体资源的能力，通常通过 JDBC 连接设置交给数据库执行。
-- 超时时间（Timeout）：事务允许的执行时间上限。超时控制取决于资源实现，Spring 不会在超时点中断正在运行的 Java 代码。
-- 只读标记（Read-only）：表达以读取为主的意图。JDBC 下传给连接的只读属性；ORM 下可能据此调整刷新模式。多数数据库不会强制禁止写入。
-
-`@Transactional` 注解、编程式事务模板等入口都通过适配机制形成事务定义，再交给事务管理器。事务属性不会每次调用都完整重作用于底层资源：方法加入已有事务时，隔离级别和超时时间沿用已有物理事务的设置。
-
-### 1.3 TransactionStatus：执行期的生命周期状态维护
-
-`TransactionStatus` 描述一次事务处理过程的执行状态：事务是否完成、当前作用域是否对应新的物理事务、是否已被标记为只能回滚。
-
-```
-public interface TransactionStatus
-        extends TransactionExecution, SavepointManager, Flushable {
-
-    boolean hasSavepoint();
-
-    void flush();
-}
-```
-
-继承的 `TransactionExecution` 提供新事务判断、完成状态和回滚标记的读写；`SavepointManager` 提供保存点操作；`Flushable` 用于触发底层会话或连接的刷新。
-
-事务状态不等于数据库事务状态。两个 `PROPAGATION_REQUIRED` 方法各自拥有逻辑事务作用域，却共用同一个物理事务：内层 `TransactionStatus` 表明它不是新事务，仍能参与当前作用域的回滚控制。业务代码调用 `setRollbackOnly()` 后，事务管理器在提交阶段识别该状态并阻止正常提交。
-
-## 二、声明式事务实现
-
-`@Transactional` 标记目标方法，由 Spring AOP 基础设施把元数据与方法调用关联起来，事务拦截器执行事务逻辑。
-
-### 2.1 AOP 基础设施与 TransactionInterceptor
-
-`TransactionInterceptor` 实现 AOP Alliance 的 `MethodInterceptor`（AOP Alliance 是拦截器 API 的公共规范），在目标方法调用前后执行事务逻辑：
-
-```
-调用代理对象
-    ↓
-AOP 选择匹配的拦截器
-    ↓
-TransactionInterceptor
-    ↓
-解析事务属性
-    ↓
-获取 PlatformTransactionManager
-    ↓
-开启事务或参与已有事务
-    ↓
-调用目标业务方法
-    ↓
-根据执行结果提交或回滚
-    ↓
-返回结果或抛出异常
-```
-
-拦截器通过 `TransactionAspectSupport` 的事务执行模板组织流程，核心入口是 `invokeWithinTransaction()`。方法正常返回进入提交处理，抛出异常则按事务属性判断回滚还是继续提交；真正的提交回滚由事务管理器负责。拦截器围绕方法调用组织事务语义，事务管理器围绕底层资源执行事务操作。
-
-### 2.2 代理对象的创建
-
-Spring AOP 用代理对象拦截外部方法调用，只有经过事务拦截链的调用才会执行 `TransactionInterceptor`。
-
-JDK 动态代理基于接口创建代理对象，外部调用经代理处理器进入拦截链再调目标对象。CGLIB 代理通过生成目标类的子类实现，不能代理 `final` 类，也不能通过覆写拦截 `final` 方法。
-
-代理方式由目标类型和配置共同决定：纯 Spring 默认对实现接口的对象用 JDK 代理、无接口的对象用 CGLIB，`proxyTargetClass=true` 强制 CGLIB；Spring Boot 2.0 起该属性默认为 `true`，无论有无接口都用 CGLIB。对事务而言，代理技术不重要，方法调用是否经过事务拦截器才重要。
-
-```
+```java
 @Service
 public class OrderService {
 
     @Transactional
     public void createOrder() {
-        saveOrder();
-    }
-
-    @Transactional
-    public void saveOrder() {
-        // 写入订单数据
+        // 创建订单
+        // 扣减库存
+        // 记录订单明细
     }
 }
 ```
 
-外部通过容器取得的代理对象调用 `createOrder()` 时，事务拦截器介入。`createOrder()` 内部的 `this.saveOrder()` 是目标对象上的普通方法调用，不经过代理，`saveOrder()` 的注解不会独立触发一次事务拦截。若 `createOrder()` 已开启事务，内部调用仍运行在当前事务中，只是注解不会被重新解析执行。
+Spring 通过代理拦截 `createOrder()` 的调用，在方法执行前开启或加入事务，在方法执行后提交或回滚。
 
-### 2.3 基础设施切面与目标定位
+编程式事务可以使用 `TransactionTemplate`：
 
-事务注解解析与代理创建发生在 Bean 初始化和 AOP 基础设施配置阶段，不在每次调用时扫描注解。`@EnableTransactionManagement` 通过 `@Import` 引入两个配置：
+```java
+@Service
+public class OrderService {
 
-- `AutoProxyRegistrar`：注册自动代理创建器 `InfrastructureAdvisorAutoProxyCreator`，识别需要增强的 Bean 并创建代理。
-- `ProxyTransactionManagementConfiguration`：装配 `AnnotationTransactionAttributeSource`（从方法和类解析事务属性）、`TransactionInterceptor` 和 `BeanFactoryTransactionAttributeSourceAdvisor`。
+    private final TransactionTemplate transactionTemplate;
 
-Advisor 是切点与增强逻辑的组合：切点判断哪些类和方法需要增强，拦截器执行事务处理。代理创建器发现目标 Bean 存在匹配的事务增强时，把事务拦截器纳入其代理调用链，此后外部调用代理对象才触发事务。
+    public OrderService(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
 
-属性解析规则：方法上的注解优先于类上的注解；接口方法与实现类方法都标注时，按属性源的解析顺序取先命中的一份。
-
-### 2.4 事务不生效的典型场景
-
-| 场景 | 原因 | 对策 |
-| --- | --- | --- |
-| 类内方法互调 | 内部调用不经过代理 | 注入自身代理或拆成独立 Bean |
-| `final` 方法或 `final` 类 | CGLIB 无法覆写或继承 | 去掉 `final`，或改用 JDK 代理 |
-| 非 `public` 方法 | 代理模式只对 `public` 方法拦截 | 注解移到 `public` 入口方法 |
-| 异常被捕获后正常返回 | 拦截器看到的是正常返回 | 继续向外抛，或显式 `setRollbackOnly()` |
-| 方法内新开线程做数据库操作 | 事务资源绑定在线程上，新线程取不到 | 新线程的操作不纳入本事务 |
-| 对象未经 Spring 容器管理 | 根本没有代理 | 交给容器管理 |
-
-## 三、事务语义：传播、隔离与回滚规则
-
-### 3.1 传播机制：线程挂起、恢复与嵌套事务
-
-传播行为描述的是事务作用域与已有事务的关系，不是简单地描述是否执行 `BEGIN` 或 `COMMIT`。
-
-`PROPAGATION_REQUIRED`：当前线程已有事务则加入，没有则新建。外层与内层各有逻辑事务作用域，共用一个物理事务，内层正常返回不会独立提交数据库事务。
-
-```
-外层方法：开启事务 T1
-    ↓
-内层方法：REQUIRED
-    ↓
-参与事务 T1
-    ↓
-内层方法结束
-    ↓
-外层方法继续执行
-    ↓
-提交或回滚 T1
-```
-
-`PROPAGATION_REQUIRES_NEW`：挂起外层事务，开启独立的物理事务，内层结束后恢复外层。
-
-```
-外层事务 T1
-    ↓
-挂起 T1
-    ↓
-开启内层事务 T2
-    ↓
-提交或回滚 T2
-    ↓
-恢复 T1
-    ↓
-继续执行外层逻辑
-```
-
-`REQUIRES_NEW` 需要额外的数据库连接：外层连接上挂着未结束的事务，内层独立事务需要另一条能独立提交回滚的连接。
-
-`PROPAGATION_NESTED`：在现有事务内建立嵌套作用域，JDBC 下通过 `Savepoint` 实现。内层回滚只回到保存点，不波及外层；内层正常结束不等于数据库事务已提交，最终提交仍由外层物理事务控制。当前没有事务时，`NESTED` 会新建事务，而不是凭空创建保存点。
-
-其余传播行为：
-
-- `SUPPORTS`：有事务则参与，没有则以非事务方式执行。
-- `MANDATORY`：要求已有事务，没有则抛异常。
-- `NOT_SUPPORTED`：以非事务方式执行，已有事务则先挂起。
-- `NEVER`：要求没有事务，已有事务则抛异常。
-
-传播行为是事务管理器对作用域的组织规则。不同事务管理器在挂起、恢复、嵌套上的能力不同，不能当成所有底层资源都能无条件实现的操作。
-
-### 3.2 隔离级别与底层数据库连接
-
-Spring 的 `Isolation` 枚举：
-
-| 级别 | 含义 |
-| --- | --- |
-| `DEFAULT` | 采用底层数据库的默认隔离级别 |
-| `READ_UNCOMMITTED` | 读未提交 |
-| `READ_COMMITTED` | 读已提交 |
-| `REPEATABLE_READ` | 可重复读 |
-| `SERIALIZABLE` | 串行化 |
-
-JDBC 本地事务通过 `Connection.setTransactionIsolation()` 把隔离级别映射到底层连接，由数据库执行并发控制。实际效果取决于数据库实现：不同数据库对快照读取、锁定读取和范围锁的处理不同，同名隔离级别的并发行为未必一致。
-
-加入已有事务时，隔离级别不会单独生效。外层以 `READ_COMMITTED` 开启事务，内层声明 `REPEATABLE_READ` 且使用 `REQUIRED` 时，内层加入的是外层物理事务，Spring 不会为其重开数据库事务或切换连接隔离级别。`AbstractPlatformTransactionManager` 开启 `validateExistingTransaction` 后，可对这类不兼容配置做校验并报错，而不是默默忽略。
-
-隔离级别是事务定义的属性，但参与已有事务的方法不能独立决定实际使用的隔离级别。
-
-### 3.3 回滚规则：异常体系与 rollbackFor 的匹配逻辑
-
-默认只对 `RuntimeException` 和 `Error` 回滚，受检异常不回滚。这是 Spring 的规则，不是数据库对 Java 异常类型的要求。
-
-```
-@Transactional
-public void createOrder() throws Exception {
-    saveOrder();
-    throw new Exception("创建失败");
+    public void createOrder() {
+        transactionTemplate.execute(status -> {
+            // 创建订单
+            // 扣减库存
+            // 记录订单明细
+            return null;
+        });
+    }
 }
 ```
 
-这段代码按默认规则不会回滚。让它回滚需要显式声明 `@Transactional(rollbackFor = Exception.class)`。
+`TransactionTemplate` 在内部完成事务获取、业务回调执行、异常处理以及提交或回滚，避免业务代码重复编写事务控制逻辑。
 
-解析后，回滚规则封装进事务属性对象；拦截器捕获异常后按属性判断，`RuleBasedTransactionAttribute` 负责匹配，规则来自 `rollbackFor`、`noRollbackFor` 及其字符串形式。多条规则同时匹配时取最具体的一条（按异常继承深度判断）；没有自定义规则命中时用默认判断。
+两种方式最终都依赖具体的事务管理器。区别在于事务边界由注解元数据驱动，还是由程序代码显式控制。
 
-拦截器只对它实际观察到的异常和事务状态做判断。方法内捕获异常并正常返回时，拦截器看到的是正常返回，不会回滚，除非事务已被显式标记为只能回滚：
+## Spring事务架构体系
 
+### 1. 核心架构与调用链
+
+Spring 事务的核心体系由事务属性、事务拦截、事务管理器和事务资源几个部分构成：
+
+![spring-tx-transactional](spring-tx-transactional.jpg)
+
+`@Transactional` 本身只是事务元数据，标记方法使用事务。 `@EnableTransactionManagement`（或 XML 中的 `<tx:annotation-driven/>`）启用注解驱动的事务管理；Spring Boot 由 `TransactionAutoConfiguration` 自动完成配置。
+
+启用之后，Spring 解析注解中的事务属性，并将符合条件的 Bean 方法纳入事务拦截机制。以 JDBC 本地事务为例，一次事务方法调用的完整流程是：
+
+1. 业务方法被事务代理拦截，进入 `TransactionInterceptor`。
+2. Spring 读取事务属性，确定传播行为、隔离级别、超时时间、只读标记和回滚规则。
+3. `TransactionAspectSupport` 选择事务管理器，调用 `getTransaction()`，由事务管理器判断当前是否存在事务，决定加入已有事务还是创建新事务。
+4. Spring 获取并管理 JDBC `Connection`，根据事务属性设置隔离级别、自动提交状态等。
+5. 执行业务目标方法。
+6. 根据执行结果结束事务：正常返回则提交；异常退出则按回滚规则决定回滚或提交（回滚规则见第四章第 5 节）。最后完成事务资源的清理。
+
+### 2. 核心接口：PlatformTransactionManager、TransactionDefinition、TransactionStatus
+
+`PlatformTransactionManager` 是 Spring 命令式事务管理体系的核心抽象：
+
+```java
+public interface PlatformTransactionManager {
+
+    TransactionStatus getTransaction(
+        TransactionDefinition definition
+    ) throws TransactionException;
+
+    void commit(
+        TransactionStatus status
+    ) throws TransactionException;
+
+    void rollback(
+        TransactionStatus status
+    ) throws TransactionException;
+}
 ```
-@Transactional
-public void createOrder() {
+
+三个核心方法分别负责获取事务状态、提交事务和回滚事务：
+
+- `getTransaction()` 根据事务定义判断当前事务是否存在、是否应该加入当前事务，以及是否需要创建新的事务。
+- `commit()` 根据事务状态执行提交逻辑。如果事务已经被标记为只能回滚，事务管理器不会把它当作正常事务直接提交。
+- `rollback()` 执行回滚处理。对于参与已有物理事务的逻辑事务，回滚可能表现为标记整个事务为 `rollback-only`；对于支持保存点的嵌套事务，也可能只回滚到相应保存点。
+
+`PlatformTransactionManager` 只规定事务管理的统一调用契约，具体的事务启动、挂起、提交、回滚和资源清理由其实现类完成。
+
+`TransactionDefinition` 用于描述事务的执行规则，主要包括传播行为、隔离级别、超时时间、是否只读和事务名称。最终由事务管理器据此决定如何处理事务。
+
+`TransactionStatus` 表示当前事务作用域在执行期的状态，主要用于描述和操作：当前事务是否为新事务、是否存在回滚标记、是否已经完成、是否可以使用保存点、是否支持设置 `rollback-only`。编程式事务中可以通过它显式控制回滚：
+
+```java
+transactionTemplate.execute(status -> {
     try {
-        saveOrder();
-        throw new RuntimeException("业务失败");
+        // 执行业务操作
     } catch (RuntimeException ex) {
-        // 异常被吞掉
+        status.setRollbackOnly();
     }
+    return null;
+});
+```
+
+调用 `setRollbackOnly()` 后，即使回调正常返回，事务也不能再作为正常事务直接提交。`TransactionStatus` 不是数据库事务本身，而是 Spring 对当前事务执行过程及控制状态的抽象。
+
+### 3. 事务资源绑定与线程模型
+
+`TransactionSynchronizationManager` 负责管理当前执行上下文中的事务资源和事务同步回调（`TransactionSynchronization`，可在事务提交、回滚、完成等时机接收回调）。
+
+在传统的命令式事务模型中，Spring 通过线程绑定的方式管理 JDBC `Connection` 等事务资源。以 `DataSourceTransactionManager` 为例：
+
+1. 创建或获取用于事务的 JDBC `Connection`。
+2. 将连接与对应的数据源绑定到当前线程。
+3. 同一线程中的后续数据库操作通过 Spring 管理的数据源访问机制获取与当前事务关联的连接。
+4. 事务结束后，执行必要的同步回调，解绑并释放或归还相关资源。
+
+因此，同一线程中的多个数据库操作可以共享事务连接，从而参与同一个物理事务。
+
+线程绑定也意味着传统事务上下文不会因为普通的线程切换而自动传递：使用 `new Thread()` 或线程池执行异步任务时，新线程不会自动加入原线程的事务。响应式事务使用 Reactor Context 等机制管理上下文，与传统线程绑定模式不同。
+
+### 4. 主要事务管理器实现及与数据访问层的配合
+
+Spring 提供不同的 `PlatformTransactionManager` 实现，以适配不同的事务资源：
+
+| 事务管理器                     | 主要用途                                                     |
+| ------------------------------ | ------------------------------------------------------------ |
+| `DataSourceTransactionManager` | 管理单个 JDBC `DataSource` 的本地事务                        |
+| `JdbcTransactionManager`       | Spring 5.3 起提供的扩展子类，在提交/回滚时将数据库异常转换为 `DataAccessException` 子类（与 `JdbcTemplate` 行为对齐），而 `DataSourceTransactionManager` 只会抛出 `TransactionSystemException` |
+| `JpaTransactionManager`        | 管理 JPA `EntityManager` 及其事务                            |
+| `JtaTransactionManager`        | 对接 JTA 事务，适用于相应的分布式或容器事务管理场景          |
+
+## 事务传播行为
+
+### 1. 传播行为的作用
+
+事务传播行为用于规定：**当前方法在已有事务或没有事务的情况下被调用时，应该如何处理事务关系。**
+
+传播行为解决的是事务边界与调用关系问题。
+
+Spring 使用 `Propagation` 枚举定义七种标准传播行为。
+
+### 2. 七种传播行为
+
+| 传播行为        | 存在当前事务时                 | 不存在当前事务时 |
+| --------------- | ------------------------------ | ---------------- |
+| `REQUIRED`      | 加入当前事务                   | 创建新事务       |
+| `SUPPORTS`      | 加入当前事务                   | 以非事务方式执行 |
+| `MANDATORY`     | 加入当前事务                   | 抛出异常         |
+| `REQUIRES_NEW`  | 挂起当前事务，创建新事务       | 创建新事务       |
+| `NOT_SUPPORTED` | 挂起当前事务，以非事务方式执行 | 以非事务方式执行 |
+| `NEVER`         | 抛出异常                       | 以非事务方式执行 |
+| `NESTED`        | 在当前事务中建立嵌套事务点     | 创建新事务       |
+
+- **`PROPAGATION_REQUIRED`（默认）**：如果当前存在事务，则加入该事务；如果当前没有事务，则新建一个事务。
+- **`PROPAGATION_REQUIRES_NEW`：** 新建一个独立的事务。如果当前存在事务，则把当前事务挂起。
+- **`PROPAGATION_NESTED`：** 如果当前存在事务，则在嵌套事务内执行（依赖数据库的 Savepoint 保存点机制）；如果当前没有事务，则表现形式同 `REQUIRED`。嵌套事务回滚不影响外部事务，但外部事务回滚会连带嵌套事务一起回滚。
+- **底层原理**：Spring 利用 `ThreadLocal` 和 `TransactionSynchronizationManager`，将当前线程与对应的数据库连接（`Connection`）及事务资源进行绑定、挂起与恢复。
+
+## 隔离级别与其他事务属性
+
+### 1. 隔离级别与并发问题
+
+事务隔离级别规定并发事务之间允许观察到哪些数据变化。数据库并发操作可能出现以下问题：
+
+- **脏读**：读取到其他事务尚未提交的数据。
+- **不可重复读**：同一事务两次读取同一行，得到不同结果。
+- **幻读**：同一事务按照相同条件重复查询，返回的行集合发生变化。
+
+Spring 使用 `Isolation` 枚举描述事务隔离级别。具体隔离效果取决于数据库的实现方式，不能仅凭枚举名称推断所有数据库都具有完全相同的行为。
+
+### 2. 五种隔离级别
+
+- **`ISOLATION_DEFAULT`** :使用后端数据库默认的隔离级别，MySQL 默认采用的 `REPEATABLE_READ` 隔离级别 Oracle 默认采用的 `READ_COMMITTED` 隔离级别.
+- **`ISOLATION_READ_UNCOMMITTED`** :最低的隔离级别，使用这个隔离级别很少，因为它允许读取尚未提交的数据变更，**可能会导致脏读、幻读或不可重复读**
+- **`ISOLATION_READ_COMMITTED`** : 允许读取并发事务已经提交的数据，**可以阻止脏读，但是幻读或不可重复读仍有可能发生**
+- **`ISOLATION_REPEATABLE_READ`** : 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，**可以阻止脏读和不可重复读，但幻读仍有可能发生。**
+- **`ISOLATION_SERIALIZABLE`** : 最高的隔离级别，完全服从 ACID 的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，**该级别可以防止脏读、不可重复读以及幻读**。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
+
+### 3. 隔离级别的设置与生效限制
+
+可以通过 `@Transactional` 声明隔离级别，也可以与传播行为、超时等属性组合使用：
+
+```java
+@Transactional(
+    propagation = Propagation.REQUIRED,
+    isolation = Isolation.READ_COMMITTED,
+    timeout = 10
+)
+public void updateOrder() {
+    // 更新订单
 }
 ```
 
-## 四、执行机制：资源同步与生命周期闭环
+Spring 的 `AbstractPlatformTransactionManager` 提供 `validateExistingTransaction` 等机制，可以配置对参与已有事务时的隔离级别不一致进行校验。
 
-### 4.1 TransactionSynchronizationManager 与 ThreadLocal 资源绑定
+传播行为决定事务如何参与调用关系，隔离级别决定物理事务采用何种隔离规则。
 
-`TransactionSynchronizationManager` 维护当前线程关联的事务资源、同步回调和事务上下文，不直接执行事务操作。事务管理器开启事务时获取连接，包装为 `ConnectionHolder` 绑定到当前线程：
+### 4. 只读属性与事务超时
 
-```
-当前线程
-    │
-    └── TransactionSynchronizationManager
-            │
-            ├── 资源映射
-            │     └── DataSource → ConnectionHolder
-            │
-            ├── 事务同步回调
-            │
-            └── 事务名称、只读状态、
-                  隔离级别、实际事务状态等信息
+```java
+@Transactional(readOnly = true, timeout = 5)
+public List<Order> listOrders() {
+    return orderMapper.selectAll();
+}
 ```
 
-资源映射以资源工厂对象为键，JDBC 下即 `DataSource → ConnectionHolder`。同一线程的 DAO 通过 Spring 的资源获取机制访问同一 `DataSource` 时，复用已绑定的连接，不必层层传参即可参与同一个物理事务。线程切换后，新线程不会取得原线程绑定的资源；两个线程即使用相同的事务管理器和数据源，也不共享同一个本地事务。
+`readOnly = true` 是事务只读提示，实际效果取决于事务管理器、驱动和持久化实现。
 
-### 4.2 DataSourceUtils：连接的安全获取与生命周期托管
+超时控制由事务管理器和底层资源共同实现。
 
-`DataSourceUtils` 识别当前线程是否已绑定指定 `DataSource` 对应的事务连接：
+### 5. 回滚规则
 
-```
-Connection connection =
-        DataSourceUtils.getConnection(dataSource);
-```
+异常不一定导致回滚。`TransactionInterceptor` 在目标方法异常退出时，根据事务属性中的回滚规则决定回滚还是提交。
 
-已绑定则直接返回事务连接；未绑定则从数据源获取并处理使用与释放。直接调用 `dataSource.getConnection()` 没有这种识别能力。多个 DAO 都走这套机制（`JdbcTemplate` 即如此），就共享同一条事务连接，处于同一个物理事务中。
+默认规则是：`@Transactional` 遇到 `RuntimeException` 和 `Error` 触发回滚，受检异常（checked exception）不触发回滚。可以通过 `rollbackFor` 和 `noRollbackFor` 调整：
 
-释放同样区分归属：仍由事务管理器管理的连接，DAO 操作结束时不会真正关闭，由事务管理器在事务结束时统一清理。绕过这套机制自行获取的连接，复用不到当前事务连接。
-
-### 4.3 事务生命周期闭环：doBegin、doCommit、doRollback
-
-`AbstractPlatformTransactionManager` 实现通用逻辑：传播行为处理、事务状态创建、提交回滚协调、同步回调和资源清理；具体事务管理器负责底层资源操作。JDBC 本地事务的典型过程：
-
-```
-TransactionInterceptor
-    ↓
-AbstractPlatformTransactionManager
-    ↓
-getTransaction()
-    ↓
-判断已有事务与传播行为
-    ↓
-创建事务状态
-    ↓
-doBegin()
-    ↓
-获取连接、配置事务属性、绑定资源
-    ↓
-执行目标业务方法
-    ↓
-commit() 或 rollback()
-    ↓
-doCommit() 或 doRollback()
-    ↓
-执行事务完成回调
-    ↓
-清理资源并恢复线程上下文
+```java
+@Transactional(rollbackFor = Exception.class)
+public void importData() throws Exception {
+    // 导入业务数据
+}
 ```
 
-`doBegin()` 是开启底层事务的扩展点：获取连接、设置自动提交、应用隔离级别和只读属性、把资源绑定到线程。方法正常结束时，拦截器调用 `commit()`；后者先检查事务状态、回滚标记、是否新事务、是否参与外层事务，真正负责提交的作用域才调用 `doCommit()`（JDBC 下即连接的 `commit()`）。参与外层事务的作用域回滚时只设置全局回滚标记，由外层结束时统一处理。物理事务结束后，执行完成回调、解绑线程资源、恢复连接原状并释放连接。
+此时声明的回滚规则覆盖了默认的异常类型范围，受检异常也会触发回滚。
+
+## 事务失效场景
+
+- 代理自调用失效：声明式事务基于代理实现，只有经过代理对象的外部调用才会被事务拦截器增强。同一个对象内部的直接调用不经过代理，事务不会生效。
+
+- 异常被捕获导致不回滚。
+
+- 方法可见性与代理类型：`private` 方法在任何代理模式下都不会被事务增强。`final` 方法无法被 CGLIB 子类重写，同样不会被增强。
+
+- 异常类型不匹配。
+
+- 跨线程调用。
+
+- 对象未受 Spring 管理。如通过 `new` 直接创建的对象。
